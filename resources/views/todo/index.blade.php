@@ -102,15 +102,20 @@
                                                         action="{{ route('listItems.update', $listItem) }}">
                                                         @csrf
                                                         @method('PATCH')
-                                                        <input href="{{ route('listItems.update', $listItem) }}"
-                                                            class="form-check-input" type="checkbox" name="is_complete"
+                                                        <input class="form-check-input" type="checkbox" name="is_complete"
                                                             value="true" id="list-item-{{ $listItem->id }}"
                                                             {{ $listItem->is_complete ? 'checked' : '' }}
-                                                            onchange="this.form.submit();">
+                                                            onchange="event.preventDefault(); this.closest('form').submit();">
                                                         <label class="form-check-label"
                                                             for="list-item-{{ $listItem->id }}">
                                                             {{ $listItem->name }}
                                                         </label>
+                                                        @php
+                                                            $to_complete_at = Carbon\Carbon::create($listItem->to_complete_at)->format('m-d');
+                                                            $has_to_complete = is_null($listItem->to_complete_at) ? false : true;
+                                                        @endphp
+                                                        <small
+                                                            class="text-muted">{{ $has_to_complete ? $to_complete_at : '' }}</small>
                                                     </form>
 
                                                     {{-- Add subtask item --}}
@@ -140,12 +145,6 @@
                                                     @if ($listItem->user->is(auth()->user()))
                                                         <div
                                                             class="float-end position-absolute top-0 end-0 mt-2 action-icons">
-                                                            @php
-                                                                $to_complete_at = Carbon\Carbon::create($listItem->to_complete_at)->toFormattedDateString();
-                                                                $has_to_complete = is_null($listItem->to_complete_at) ? false : true;
-                                                            @endphp
-                                                            <small
-                                                                class="text-muted me-4">{{ $has_to_complete ? $to_complete_at : '' }}</small>
                                                             <a href="#"
                                                                 onclick="document.getElementById('sublist_item_name{{ $listItem->id }}').removeAttribute('hidden');
                                                                     document.getElementById('sublist_item_date{{ $listItem->id }}').removeAttribute('hidden')">
@@ -186,6 +185,12 @@
                                                                         for="list-item-{{ $subItem->id }}">
                                                                         {{ $subItem->name }}
                                                                     </label>
+                                                                    @php
+                                                                        $to_complete_at = Carbon\Carbon::create($subItem->to_complete_at)->format('m-d');
+                                                                        $has_to_complete = is_null($subItem->to_complete_at) ? false : true;
+                                                                    @endphp
+                                                                    <small
+                                                                        class="text-muted">{{ $has_to_complete ? $to_complete_at : '' }}</small>
 
                                                                     <form class="row float-end" method="POST"
                                                                         id="delete_item"
