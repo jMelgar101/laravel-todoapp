@@ -34,10 +34,8 @@ class TodoListController extends Controller
      */
     public function store(TodoListRequest $request): RedirectResponse
     {
-        $slug = Str::slug($request->title);
-
         $validated = $request->validated();
-        $validated['slug'] = $slug;
+        $validated['slug'] = Str::slug($request->title);
 
         $request->user()->todoLists()->create($validated);
 
