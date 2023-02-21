@@ -69,7 +69,7 @@
                                         <form class="row float-end" method="POST" id="delete_list"
                                             action="{{ route('todoLists.destroy', $todoList) }}">
                                             @csrf
-                                            @method('delete')
+                                            @method('DELETE')
                                             <a href="{{ route('todoLists.destroy', $todoList) }}"
                                                 onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
@@ -87,7 +87,8 @@
                                                 <input name="name" id="list_item_name" type="text"
                                                     class="form-control w-75" placeholder="Add new task"
                                                     aria-label="Add new task">
-                                                <input type="date" class="form-control w-25" name="to_complete_at">
+                                                <input type="date" class="form-control w-25" name="to_complete_at"
+                                                    min="{{ Carbon\Carbon::now()->toDateString() }}">
                                                 <input name="todo_list_id" id="todo_list_id" value="{{ $todoList->id }}"
                                                     type="text" class="form-control" hidden>
                                                 <button type="submit" class="btn btn-primary" hidden>Submit</button>
@@ -97,11 +98,14 @@
                                         <ul class="list-group list-group-flush items-list" id="items-list">
                                             @forelse ($todoList->listItems as $listItem)
                                                 <li class="list-group-item position-relative">
-                                                    <form class="form-check" method="POST" action="{{ route('listItems.update', $listItem) }}">
+                                                    <form class="form-check" method="POST"
+                                                        action="{{ route('listItems.update', $listItem) }}">
                                                         @csrf
-                                                        @method('patch')
-                                                        <input class="form-check-input" type="checkbox" name="is_complete" value="1"
-                                                            id="list-item-{{ $listItem->id }}" {{ ($listItem->is_complete) ? 'checked' : '' }}
+                                                        @method('PATCH')
+                                                        <input href="{{ route('listItems.update', $listItem) }}"
+                                                            class="form-check-input" type="checkbox" name="is_complete"
+                                                            value="true" id="list-item-{{ $listItem->id }}"
+                                                            {{ $listItem->is_complete ? 'checked' : '' }}
                                                             onchange="this.form.submit();">
                                                         <label class="form-check-label"
                                                             for="list-item-{{ $listItem->id }}">
@@ -119,7 +123,8 @@
                                                                 placeholder="Add sub task" hidden>
                                                             <input type="date" class="form-control w-25"
                                                                 name="to_complete_at"
-                                                                id="sublist_item_date{{ $listItem->id }}" hidden>
+                                                                id="sublist_item_date{{ $listItem->id }}"
+                                                                min="{{ Carbon\Carbon::now()->toDateString() }}" hidden>
                                                             <input name="todo_list_id" id="todo_list_id"
                                                                 value="{{ $todoList->id }}" type="text"
                                                                 class="form-control" hidden>
@@ -133,7 +138,14 @@
 
                                                     {{-- List Item Action buttons --}}
                                                     @if ($listItem->user->is(auth()->user()))
-                                                        <div class="float-end position-absolute top-0 end-0">
+                                                        <div
+                                                            class="float-end position-absolute top-0 end-0 mt-2 action-icons">
+                                                            @php
+                                                                $to_complete_at = Carbon\Carbon::create($listItem->to_complete_at)->toFormattedDateString();
+                                                                $has_to_complete = is_null($listItem->to_complete_at) ? false : true;
+                                                            @endphp
+                                                            <small
+                                                                class="text-muted me-4">{{ $has_to_complete ? $to_complete_at : '' }}</small>
                                                             <a href="#"
                                                                 onclick="document.getElementById('sublist_item_name{{ $listItem->id }}').removeAttribute('hidden');
                                                                     document.getElementById('sublist_item_date{{ $listItem->id }}').removeAttribute('hidden')">
@@ -148,7 +160,7 @@
                                                             <form class="row float-end" method="POST" id="delete_item"
                                                                 action="{{ route('listItems.destroy', $listItem) }}">
                                                                 @csrf
-                                                                @method('delete')
+                                                                @method('DELETE')
                                                                 <a href="{{ route('listItems.destroy', $listItem) }}"
                                                                     onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12"
@@ -179,8 +191,9 @@
                                                                         id="delete_item"
                                                                         action="{{ route('listItems.destroy', $subItem) }}">
                                                                         @csrf
-                                                                        @method('delete')
+                                                                        @method('DELETE')
                                                                         <a href="{{ route('listItems.destroy', $subItem) }}"
+                                                                            class="action-icons"
                                                                             onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
                                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                                 width="12" height="12"

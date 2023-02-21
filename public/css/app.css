@@ -6,3 +6,11 @@
     height: 450px;
     overflow-y: scroll;
 }
+
+.action-icons {
+    display: none;
+}
+
+li:hover .action-icons {
+    display: inline-block;
+}
