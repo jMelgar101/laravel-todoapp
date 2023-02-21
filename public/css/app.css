@@ -1,0 +1,8 @@
+.card-container {
+    height: 578px;
+}
+
+.items-list {
+    height: 450px;
+    overflow-y: scroll;
+}
