@@ -34,11 +34,10 @@
                                         {{ Str::title($todoList->title) }}
                                         <small>{{ $lastUpdated }}</small>
                                     </strong>
-                                    <small>{{ $subTitle }}</small>
-                                    {{-- <small class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                    <small>
                                         {{ $subTitle }}
-                                        <small>{{ $todoList->is_all_complete }}</small>
-                                    </small> --}}
+                                        {{-- <span class="badge text-bg-success float-end">Completed</span> --}}
+                                    </small>
                                 </a>
                             @empty
                                 <div class="list-group-item text-center">Add a list!</div>
@@ -75,10 +74,10 @@
                                             action="{{ route('todoLists.destroy', $todoList) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <a href="{{ route('todoLists.destroy', $todoList) }}"
-                                                onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
+                                            <a onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                                    fill="currentColor" class="bi bi-trash3 link-danger" viewBox="0 0 16 16">
+                                                    fill="currentColor" class="bi bi-trash3 link-danger"
+                                                    viewBox="0 0 16 16">
                                                     <path
                                                         d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
                                                 </svg>
@@ -115,14 +114,14 @@
                                                                 {{ $listItem->is_complete ? 'checked' : '' }}
                                                                 onchange="event.preventDefault(); this.closest('form').submit();">
                                                             <label class="form-check-label" for="is_complete">
-                                                                {!! ($listItem->is_complete) ? '<del>'.$listItem->name.'</del>' : $listItem->name !!}
+                                                                {!! $listItem->is_complete ? '<del>' . $listItem->name . '</del>' : $listItem->name !!}
                                                             </label>
                                                             @php
                                                                 $to_complete_by = Carbon\Carbon::create($listItem->to_complete_by)->format('m-d');
                                                                 $has_to_complete = is_null($listItem->to_complete_by) ? false : true;
                                                             @endphp
                                                             <small
-                                                                class="text-muted">{{ $has_to_complete ? $to_complete_by : '' }}</small>
+                                                                class="text-muted float-end me-5">{{ $has_to_complete ? $to_complete_by : '' }}</small>
                                                         </form>
                                                     </div>
 
@@ -144,23 +143,25 @@
                                                             <input name="parent_id" id="parent_id"
                                                                 value="{{ $listItem->id }}" type="text"
                                                                 class="form-control" hidden>
-                                                            <button type="submit" class="btn btn-primary" id="sublist_item_button{{ $listItem->id }}" hidden>Add</button>
+                                                            <button type="submit" class="btn btn-primary"
+                                                                id="sublist_item_button{{ $listItem->id }}"
+                                                                hidden>Add</button>
                                                         </div>
                                                     </form>
 
                                                     {{-- List Item Action buttons --}}
                                                     @if ($listItem->user->is(auth()->user()))
                                                         <div
-                                                            class="float-end position-absolute top-0 end-0 mt-2 action-icons">
+                                                            class="float-end position-absolute top-0 end-0 mt-1 action-icons">
                                                             <a href="#"
                                                                 onclick="document.getElementById('sublist_item_name{{ $listItem->id }}').removeAttribute('hidden');
                                                                     document.getElementById('sublist_item_date{{ $listItem->id }}').removeAttribute('hidden');
                                                                     document.getElementById('sublist_item_button{{ $listItem->id }}').removeAttribute('hidden');">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                    height="16" fill="currentColor" class="bi bi-plus"
-                                                                    viewBox="0 0 16 16">
-                                                                    <path
-                                                                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="18"
+                                                                    height="18" fill="currentColor"
+                                                                    class="bi bi-node-plus me-2" viewBox="0 0 16 16">
+                                                                    <path fill-rule="evenodd"
+                                                                        d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
                                                                 </svg>
                                                             </a>
 
@@ -168,11 +169,11 @@
                                                                 action="{{ route('listItems.destroy', $listItem) }}">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <a href="{{ route('listItems.destroy', $listItem) }}"
-                                                                    onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
+                                                                <a onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12"
                                                                         height="12" fill="currentColor"
-                                                                        class="bi bi-trash3 link-danger" viewBox="0 0 16 16">
+                                                                        class="bi bi-trash3 link-danger"
+                                                                        viewBox="0 0 16 16">
                                                                         <path
                                                                             d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
                                                                     </svg>
@@ -196,18 +197,18 @@
                                                                             {{ $subItem->is_complete ? 'checked' : '' }}
                                                                             onchange="event.preventDefault(); this.closest('form').submit();">
                                                                         <label class="form-check-label" for="is_complete">
-                                                                            {!! ($subItem->is_complete) ? '<del>'.$subItem->name.'</del>' : $subItem->name !!}
+                                                                            {!! $subItem->is_complete ? '<del>' . $subItem->name . '</del>' : $subItem->name !!}
                                                                         </label>
                                                                         @php
                                                                             $to_complete_by = Carbon\Carbon::create($subItem->to_complete_by)->format('m-d');
                                                                             $has_to_complete = is_null($subItem->to_complete_by) ? false : true;
                                                                         @endphp
                                                                         <small
-                                                                            class="text-muted">{{ $has_to_complete ? $to_complete_by : '' }}</small>
+                                                                            class="text-muted  float-end me-4">{{ $has_to_complete ? $to_complete_by : '' }}</small>
                                                                     </form>
 
                                                                     <form
-                                                                        class="float-end position-absolute top-0 end-0 mt-2"
+                                                                        class="float-end position-absolute top-0 end-0 mt-1"
                                                                         method="POST" id="delete_item"
                                                                         action="{{ route('listItems.destroy', $subItem) }}">
                                                                         @csrf
@@ -217,7 +218,8 @@
                                                                             onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
                                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                                 width="12" height="12"
-                                                                                fill="currentColor" class="bi bi-trash3 link-danger"
+                                                                                fill="currentColor"
+                                                                                class="bi bi-trash3 link-danger"
                                                                                 viewBox="0 0 16 16">
                                                                                 <path
                                                                                     d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
