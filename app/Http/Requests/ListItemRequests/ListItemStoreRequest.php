@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\ListItemRequests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ListItemRequest extends FormRequest
+class ListItemStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

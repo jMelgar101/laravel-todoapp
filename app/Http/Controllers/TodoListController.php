@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TodoListRequest;
+use App\Http\Requests\TodoListRequests\TodoListStoreRequest;
 use App\Models\TodoList;
 
 use Illuminate\Support\Str;
@@ -29,10 +29,10 @@ class TodoListController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\TodoListRequest  $request
+     * @param  \Illuminate\Http\TodoListRequests\TodoListStoreRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(TodoListRequest $request): RedirectResponse
+    public function store(TodoListStoreRequest $request): RedirectResponse
     {
         $validated = $request->validated();
         $validated['slug'] = Str::slug($request->title);
@@ -45,11 +45,11 @@ class TodoListController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\TodoListRequest  $request
+     * @param  \Illuminate\Http\TodoListRequests\TodoListStoreRequest  $request
      * @param  \App\Models\TodoList  $todoList
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(TodoListRequest $request, TodoList $todoList): RedirectResponse
+    public function update(TodoListStoreRequest $request, TodoList $todoList): RedirectResponse
     {
         $todoList->update($request->validated());
 

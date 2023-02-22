@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ListItemRequest;
+use App\Http\Requests\ListItemRequests\ListItemStoreRequest;
 use App\Models\ListItem;
 use App\Models\TodoList;
-use Carbon\Carbon;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+
+use Carbon\Carbon;
 
 class ListItemController extends Controller
 {
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\ListItemRequest  $request
+     * @param  \Illuminate\Http\ListItemRequests\ListItemStoreRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(ListItemRequest $request): RedirectResponse
+    public function store(ListItemStoreRequest $request): RedirectResponse
     {
         $request->user()->listItems()->create($request->validated());
 
@@ -30,7 +32,7 @@ class ListItemController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\ListItemRequest  $request
+     * @param  \Illuminate\Http\ListItemRequests\ListItemUpdateRequest  $request
      * @param  \App\Models\ListItem  $listItem
      * @return \Illuminate\Http\RedirectResponse
      */
