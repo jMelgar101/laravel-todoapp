@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ListItemRequest;
 use App\Models\ListItem;
 use App\Models\TodoList;
-
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ListItemController extends Controller
 {
@@ -38,11 +37,30 @@ class ListItemController extends Controller
     public function update(Request $request, ListItem $listItem): RedirectResponse
     {
         // $validated = $request->validated();
-        $validated = $request->only(['is_complete']);
+        $validated = $request->only([
+            'name',
+            'is_complete',
+            'to_complete_by',
+            'todo_list_id',
+            'parent_id',
+        ]);
+
         $validated['is_complete'] = $request->has('is_complete') ? 1 : 0;
+
+        if ($validated['is_complete'] === 1) {
+            $validated['completed_at'] = Carbon::now()->toDateString();
+        }
 
         $listItem->update($validated);
         $listItem->sublistItems()->update($validated);
+
+        if ($request->filled('parent_id')) {
+            $listItem->sublistItems()->update($validated);
+        }
+
+        // update todoList complete status
+        $items_count = $listItem->todoList->listItems->where('is_complete', 0)->count();
+        $listItem->todoList->update(['is_all_complete' => ($items_count > 0) ? 0 : 1]);
 
         return redirect(route('todoLists.index'));
     }
