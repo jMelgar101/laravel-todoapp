@@ -13,7 +13,7 @@
                                     <div class="input-group">
                                         <input name="title" type="text" class="form-control"
                                             placeholder="Add new list - Title" aria-label="Add new list" required>
-                                        <button type="submit" class="btn btn-primary">Add</button>
+                                        <button type="submit" class="btn btn-primary">Add List</button>
                                     </div>
                                 </form>
                             </div>
@@ -36,7 +36,7 @@
                                     </strong>
                                     <small>
                                         {{ $subTitle }}
-                                        {{-- <span class="badge text-bg-success float-end">Completed</span> --}}
+                                        {!! $todoList->is_all_complete ? '<span class="badge text-bg-success float-end">Completed</span>' : '' !!}
                                     </small>
                                 </a>
                             @empty
@@ -95,7 +95,7 @@
                                                     min="{{ Carbon\Carbon::now()->toDateString() }}">
                                                 <input name="todo_list_id" id="todo_list_id" value="{{ $todoList->id }}"
                                                     type="text" class="form-control" hidden>
-                                                <button type="submit" class="btn btn-primary">Add</button>
+                                                <button type="submit" class="btn btn-primary">Add Item</button>
                                             </div>
                                         </form>
 
