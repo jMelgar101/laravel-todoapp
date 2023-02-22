@@ -97,28 +97,31 @@
 
                                         <ul class="list-group list-group-flush items-list" id="items-list">
                                             @forelse ($todoList->listItems as $listItem)
+                                                {{-- Todo List items --}}
                                                 <li class="list-group-item position-relative">
-                                                    <form class="form-check" method="POST"
-                                                        action="{{ route('listItems.update', $listItem) }}">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <input class="form-check-input" type="checkbox" name="is_complete"
-                                                            value="true" id="list-item-{{ $listItem->id }}"
-                                                            {{ $listItem->is_complete ? 'checked' : '' }}
-                                                            onchange="event.preventDefault(); this.closest('form').submit();">
-                                                        <label class="form-check-label"
-                                                            for="list-item-{{ $listItem->id }}">
-                                                            {{ $listItem->name }}
-                                                        </label>
-                                                        @php
-                                                            $to_complete_at = Carbon\Carbon::create($listItem->to_complete_at)->format('m-d');
-                                                            $has_to_complete = is_null($listItem->to_complete_at) ? false : true;
-                                                        @endphp
-                                                        <small
-                                                            class="text-muted">{{ $has_to_complete ? $to_complete_at : '' }}</small>
-                                                    </form>
+                                                    <div class="form-check">
+                                                        <form method="POST"
+                                                            action="{{ route('listItems.update', $listItem) }}">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input class="form-check-input" type="checkbox"
+                                                                name="is_complete" value="1"
+                                                                id="is_complete_{{ $listItem->id }}"
+                                                                {{ $listItem->is_complete ? 'checked' : '' }}
+                                                                onchange="event.preventDefault(); this.closest('form').submit();">
+                                                            <label class="form-check-label" for="is_complete">
+                                                                {{ $listItem->name }}
+                                                            </label>
+                                                            @php
+                                                                $to_complete_at = Carbon\Carbon::create($listItem->to_complete_at)->format('m-d');
+                                                                $has_to_complete = is_null($listItem->to_complete_at) ? false : true;
+                                                            @endphp
+                                                            <small
+                                                                class="text-muted">{{ $has_to_complete ? $to_complete_at : '' }}</small>
+                                                        </form>
+                                                    </div>
 
-                                                    {{-- Add subtask item --}}
+                                                    {{-- Add sublist item --}}
                                                     <form class="form-group" method="POST"
                                                         action="{{ route('listItems.store', $listItem) }}">
                                                         @csrf
@@ -178,21 +181,27 @@
                                                         @forelse ($listItem->subListItems as $subItem)
                                                             <li class="list-group-item position-relative border-0 pb-0">
                                                                 <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                        value=""
-                                                                        id="list-item-{{ $subItem->id }}">
-                                                                    <label class="form-check-label"
-                                                                        for="list-item-{{ $subItem->id }}">
-                                                                        {{ $subItem->name }}
-                                                                    </label>
-                                                                    @php
-                                                                        $to_complete_at = Carbon\Carbon::create($subItem->to_complete_at)->format('m-d');
-                                                                        $has_to_complete = is_null($subItem->to_complete_at) ? false : true;
-                                                                    @endphp
-                                                                    <small
-                                                                        class="text-muted">{{ $has_to_complete ? $to_complete_at : '' }}</small>
+                                                                    <form method="POST"
+                                                                        action="{{ route('listItems.update', $subItem) }}">
+                                                                        @csrf
+                                                                        @method('PATCH')
+                                                                        <input class="form-check-input" type="checkbox"
+                                                                            name="is_complete" value="1"
+                                                                            id="is_complete_{{ $subItem->id }}"
+                                                                            {{ $subItem->is_complete ? 'checked' : '' }}
+                                                                            onchange="event.preventDefault(); this.closest('form').submit();">
+                                                                        <label class="form-check-label" for="is_complete">
+                                                                            {{ $subItem->name }}
+                                                                        </label>
+                                                                        @php
+                                                                            $to_complete_at = Carbon\Carbon::create($subItem->to_complete_at)->format('m-d');
+                                                                            $has_to_complete = is_null($subItem->to_complete_at) ? false : true;
+                                                                        @endphp
+                                                                        <small
+                                                                            class="text-muted">{{ $has_to_complete ? $to_complete_at : '' }}</small>
+                                                                    </form>
 
-                                                                    <form class="row float-end" method="POST"
+                                                                    <form class="float-end position-absolute top-0 end-0 mt-2" method="POST"
                                                                         id="delete_item"
                                                                         action="{{ route('listItems.destroy', $subItem) }}">
                                                                         @csrf

@@ -7,13 +7,15 @@ use App\Models\ListItem;
 use App\Models\TodoList;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ListItemController extends Controller
 {
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\ListItemRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(ListItemRequest $request): RedirectResponse
@@ -29,13 +31,17 @@ class ListItemController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\ListItemRequest  $request
      * @param  \App\Models\ListItem  $listItem
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(ListItemRequest $request, ListItem $listItem): RedirectResponse
+    public function update(Request $request, ListItem $listItem): RedirectResponse
     {
-        $listItem->update($request->validated());
+        $validated = $request->only(['is_complete']);
+        $validated['is_complete'] = $request->has('is_complete') ? 1 : 0;
+
+        $listItem->update($validated);
+        $listItem->sublistItems()->update($validated);
 
         return redirect(route('todoLists.index'));
     }
