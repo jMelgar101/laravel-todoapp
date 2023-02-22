@@ -35,6 +35,10 @@
                                         <small>{{ $lastUpdated }}</small>
                                     </strong>
                                     <small>{{ $subTitle }}</small>
+                                    {{-- <small class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                        {{ $subTitle }}
+                                        <small>{{ $todoList->is_all_complete }}</small>
+                                    </small> --}}
                                 </a>
                             @empty
                                 <div class="list-group-item text-center">Add a list!</div>
@@ -111,7 +115,7 @@
                                                                 {{ $listItem->is_complete ? 'checked' : '' }}
                                                                 onchange="event.preventDefault(); this.closest('form').submit();">
                                                             <label class="form-check-label" for="is_complete">
-                                                                {{ $listItem->name }}
+                                                                {!! ($listItem->is_complete) ? '<del>'.$listItem->name.'</del>' : $listItem->name !!}
                                                             </label>
                                                             @php
                                                                 $to_complete_by = Carbon\Carbon::create($listItem->to_complete_by)->format('m-d');
@@ -192,7 +196,7 @@
                                                                             {{ $subItem->is_complete ? 'checked' : '' }}
                                                                             onchange="event.preventDefault(); this.closest('form').submit();">
                                                                         <label class="form-check-label" for="is_complete">
-                                                                            {{ $subItem->name }}
+                                                                            {!! ($subItem->is_complete) ? '<del>'.$subItem->name.'</del>' : $subItem->name !!}
                                                                         </label>
                                                                         @php
                                                                             $to_complete_by = Carbon\Carbon::create($subItem->to_complete_by)->format('m-d');
