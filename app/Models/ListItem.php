@@ -17,7 +17,7 @@ class ListItem extends Model
     protected $fillable = [
         'name',
         'is_complete',
-        'to_complete_at',
+        'to_complete_by',
         'completed_at',
         'user_id',
         'todo_list_id',
@@ -31,7 +31,7 @@ class ListItem extends Model
      */
     protected $casts = [
         'is_complete' => 'boolean',
-        'to_complete_at' => 'datetime',
+        'to_complete_by' => 'datetime',
         'completed_at' => 'datetime',
     ];
 

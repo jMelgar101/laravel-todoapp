@@ -37,6 +37,7 @@ class ListItemController extends Controller
      */
     public function update(Request $request, ListItem $listItem): RedirectResponse
     {
+        // $validated = $request->validated();
         $validated = $request->only(['is_complete']);
         $validated['is_complete'] = $request->has('is_complete') ? 1 : 0;
 

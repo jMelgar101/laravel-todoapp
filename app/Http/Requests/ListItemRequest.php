@@ -26,7 +26,7 @@ class ListItemRequest extends FormRequest
         return [
             'name'              => ['required', 'string', 'max:255'],
             'is_complete'       => ['boolean'],
-            'to_complete_at'    => ['nullable', 'date'],
+            'to_complete_by'    => ['nullable', 'date'],
             'completed_at'      => ['nullable', 'date'],
             'todo_list_id'      => ['required'],
             'parent_id'         => ['nullable'],
