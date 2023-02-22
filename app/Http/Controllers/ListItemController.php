@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ListItemRequests\ListItemStoreRequest;
+use App\Http\Requests\ListItemRequests\ListItemUpdateRequest;
+
 use App\Models\ListItem;
 use App\Models\TodoList;
 
@@ -36,17 +38,9 @@ class ListItemController extends Controller
      * @param  \App\Models\ListItem  $listItem
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, ListItem $listItem): RedirectResponse
+    public function update(ListItemUpdateRequest $request, ListItem $listItem): RedirectResponse
     {
-        // $validated = $request->validated();
-        $validated = $request->only([
-            'name',
-            'is_complete',
-            'to_complete_by',
-            'todo_list_id',
-            'parent_id',
-        ]);
-
+        $validated = $request->validated();
         $validated['is_complete'] = $request->has('is_complete') ? 1 : 0;
 
         if ($validated['is_complete'] === 1) {
