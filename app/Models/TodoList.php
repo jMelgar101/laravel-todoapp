@@ -18,7 +18,6 @@ class TodoList extends Model
         'title',
         'slug',
         'is_all_complete',
-        'completed_at',
         'user_id',
     ];
 
@@ -29,7 +28,6 @@ class TodoList extends Model
      */
     protected $casts = [
         'is_all_complete' => 'boolean',
-        'completed_at' => 'datetime',
     ];
 
     /**

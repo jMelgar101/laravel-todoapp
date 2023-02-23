@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->nullable();
             $table->boolean('is_all_complete')->default(0);
-            $table->timestamp('completed_at')->nullable();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

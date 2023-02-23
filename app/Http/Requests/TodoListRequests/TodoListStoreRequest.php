@@ -27,7 +27,6 @@ class TodoListStoreRequest extends FormRequest
             'title'             => ['required', 'string', 'max:100'],
             'slug'              => ['string', 'max:255'],
             'is_all_complete'   => ['boolean'],
-            'completed_at'      => ['nullable', 'date'],
         ];
     }
 }
