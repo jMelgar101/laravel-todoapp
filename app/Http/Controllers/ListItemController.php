@@ -53,10 +53,6 @@ class ListItemController extends Controller
             $listItem->sublistItems()->update($validated);
         }
 
-        // update todoList complete/incomplete status
-        $items_count = $listItem->todoList->listItems->where('is_complete', 0)->count();
-        $listItem->todoList->update(['is_all_complete' => ($items_count > 0) ? 0 : 1]);
-
         return redirect(route('todoLists.index'));
     }
 

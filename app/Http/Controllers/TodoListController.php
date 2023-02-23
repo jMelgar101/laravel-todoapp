@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TodoListRequests\TodoListStoreRequest;
+
 use App\Models\TodoList;
+use App\Models\ListItem;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\RedirectResponse;
@@ -22,6 +24,15 @@ class TodoListController extends Controller
             ->where('user_id', auth()->id())
             ->latest('updated_at')
             ->paginate(7);
+
+        foreach($todoLists as $todoList) {
+            $itemsCount = ListItem::where([
+                'is_complete' => 0,
+                'todo_list_id' => $todoList->id,
+            ])->count();
+            
+            $todoList->update(['is_all_complete' => ($itemsCount > 0) ? 0 : 1]);
+        }
 
         return view('todo.index', compact('todoLists'));
     }
