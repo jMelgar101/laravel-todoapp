@@ -162,7 +162,8 @@
                                                             <input type="date" class="form-control"
                                                                 name="to_complete_by_date"
                                                                 id="sublist_item_date{{ $listItem->id }}" hidden
-                                                                min="{{ $carbon::now()->toDateString() }}">
+                                                                min="{{ $carbon::now()->toDateString() }}"
+                                                                max="{{ $hasCompleteDate ?  $carbon::create($to_complete_by_date)->toDateString() : '' }}">
                                                             <input type="time" class="form-control"
                                                                 name="to_complete_by_time"
                                                                 id="sublist_item_time{{ $listItem->id }}" hidden
