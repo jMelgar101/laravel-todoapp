@@ -13,6 +13,7 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
+    <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
 
     <!-- Scripts -->

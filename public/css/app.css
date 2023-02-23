@@ -4,6 +4,7 @@
 
 .items-list {
     height: 450px;
+    overflow-x: hidden;
     overflow-y: scroll;
 }
 
@@ -13,4 +14,18 @@
 
 li:hover .action-icons {
     display: inline-block;
+}
+
+::-webkit-scrollbar {
+    width: 1px;
+}
+::-webkit-scrollbar-button {
+    background: #5c9dff;
+    height: 3px;
+}
+::-webkit-scrollbar-track-piece {
+    background: #fff;
+}
+::-webkit-scrollbar-thumb {
+    background: #5c9dff;
 }
