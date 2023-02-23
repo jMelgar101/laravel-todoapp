@@ -11,6 +11,7 @@ use App\Models\TodoList;
 use Illuminate\Http\RedirectResponse;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class ListItemController extends Controller
 {
@@ -47,9 +48,18 @@ class ListItemController extends Controller
         }
 
         $listItem->update($validated);
-        $listItem->sublistItems()->update($validated);
 
-        if ($request->filled('parent_id')) {
+        if ($request->has('parent_id')) {
+            $childItemsCount = ListItem::where(['parent_id' => $request->parent_id, 'is_complete' => 0])->count();
+
+            $isParentComplete = 0;
+
+            if ($childItemsCount < 1) {
+                $isParentComplete = 1;
+            }
+
+            ListItem::where('id', $request->parent_id)->update(['is_complete' => $isParentComplete]);
+        } else {
             $listItem->sublistItems()->update($validated);
         }
 

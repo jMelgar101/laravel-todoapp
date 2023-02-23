@@ -229,6 +229,7 @@
                                                                             id="is_complete_{{ $subItem->id }}"
                                                                             {{ $subItem->is_complete ? 'checked' : '' }}
                                                                             onchange="this.closest('form').submit();">
+                                                                        <input type="text" name="parent_id" value="{{ $subItem->parent_id }}" hidden>
                                                                         <label class="form-check-label" for="is_complete_{{ $subItem->id }}">
                                                                             {!! $subItem->is_complete ? '<del>' . $subItem->name . '</del>' : $subItem->name !!}
                                                                         </label>
