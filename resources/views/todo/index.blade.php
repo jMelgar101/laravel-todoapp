@@ -108,7 +108,7 @@
                                             @forelse ($todoList->listItems as $listItem)
                                                 {{-- Todo List items --}}
                                                 <li class="list-group-item position-relative">
-                                                    <div class="form-check">
+                                                    <div class="form-check list-group-item-action">
                                                         <form method="POST"
                                                             action="{{ route('listItems.update', $listItem) }}">
                                                             @csrf
@@ -118,7 +118,7 @@
                                                                 id="is_complete_{{ $listItem->id }}"
                                                                 {{ $listItem->is_complete ? 'checked' : '' }}
                                                                 onchange="event.preventDefault(); this.closest('form').submit();">
-                                                            <label class="form-check-label" for="is_complete">
+                                                            <label class="form-check-label" for="is_complete_{{ $listItem->id }}">
                                                                 {!! $listItem->is_complete ? '<del>' . $listItem->name . '</del>' : $listItem->name !!}
                                                             </label>
                                                             @php
@@ -218,8 +218,8 @@
                                                     <ul class="list-group list-group-flush">
                                                         @forelse ($listItem->subListItems as $subItem)
                                                             <li
-                                                                class="list-group-item list-group-item-action position-relative border-0 pb-0">
-                                                                <div class="form-check">
+                                                                class="list-group-item position-relative border-0 pb-0">
+                                                                <div class="form-check list-group-item-action">
                                                                     <form method="POST"
                                                                         action="{{ route('listItems.update', $subItem) }}">
                                                                         @csrf
@@ -228,8 +228,8 @@
                                                                             name="is_complete" value="1"
                                                                             id="is_complete_{{ $subItem->id }}"
                                                                             {{ $subItem->is_complete ? 'checked' : '' }}
-                                                                            onchange="event.preventDefault(); this.closest('form').submit();">
-                                                                        <label class="form-check-label" for="is_complete">
+                                                                            onchange="this.closest('form').submit();">
+                                                                        <label class="form-check-label" for="is_complete_{{ $subItem->id }}">
                                                                             {!! $subItem->is_complete ? '<del>' . $subItem->name . '</del>' : $subItem->name !!}
                                                                         </label>
                                                                         @php
