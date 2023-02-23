@@ -17,7 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->boolean('is_complete')->default(0);
-            $table->timestamp('to_complete_by')->nullable();
+            $table->timestamp('to_complete_by_date')->nullable();
+            $table->timestamp('to_complete_by_time')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('todo_list_id')->constrained()->cascadeOnDelete();

@@ -24,12 +24,13 @@ class ListItemStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'              => ['required', 'string', 'max:255'],
-            'is_complete'       => ['boolean'],
-            'to_complete_by'    => ['nullable', 'date'],
-            'completed_at'      => ['nullable', 'date'],
-            'todo_list_id'      => ['required'],
-            'parent_id'         => ['nullable'],
+            'name'                  => ['required', 'string', 'max:255'],
+            'is_complete'           => ['boolean'],
+            'to_complete_by_date'   => ['nullable', 'date'],
+            'to_complete_by_time'   => ['nullable', 'date_format:H:i'],
+            'completed_at'          => ['nullable', 'date'],
+            'todo_list_id'          => ['required'],
+            'parent_id'             => ['nullable'],
         ];
     }
 }

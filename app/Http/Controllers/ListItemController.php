@@ -9,7 +9,6 @@ use App\Models\ListItem;
 use App\Models\TodoList;
 
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 use Carbon\Carbon;
 
@@ -54,7 +53,7 @@ class ListItemController extends Controller
             $listItem->sublistItems()->update($validated);
         }
 
-        // update todoList complete status
+        // update todoList complete/incomplete status
         $items_count = $listItem->todoList->listItems->where('is_complete', 0)->count();
         $listItem->todoList->update(['is_all_complete' => ($items_count > 0) ? 0 : 1]);
 

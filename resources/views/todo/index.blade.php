@@ -18,10 +18,10 @@
                                 </form>
                             </div>
 
-                            <?php $now = Carbon\Carbon::now(); ?>
+                            <?php $carbon = Carbon\Carbon::class; ?>
                             @forelse ($todoLists as $todoList)
                                 @php
-                                    $lastUpdated = Carbon\Carbon::parse($todoList->updated_at)->diffForHumans(null, null, true);
+                                    $lastUpdated = $carbon::parse($todoList->updated_at)->diffForHumans(null, null, true);
                                     $tabId = $todoList->slug . $todoList->id;
                                     $setActive = $loop->first ? 'active' : '';
                                     
@@ -74,7 +74,8 @@
                                             action="{{ route('todoLists.destroy', $todoList) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <a onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
+                                            <a
+                                                onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                                                     fill="currentColor" class="bi bi-trash3 link-danger"
                                                     viewBox="0 0 16 16">
@@ -89,10 +90,14 @@
                                             @csrf
                                             <div class="input-group input-group-sm">
                                                 <input name="name" id="list_item_name" type="text"
-                                                    class="form-control w-50" placeholder="Add new task"
+                                                    class="form-control w-25" placeholder="Add new task"
                                                     aria-label="Add new task" required>
-                                                <input type="date" class="form-control w-25" name="to_complete_by"
-                                                    min="{{ Carbon\Carbon::now()->toDateString() }}">
+                                                {{-- <input type="datetime-local" class="form-control" name="to_complete_by"
+                                                    min="{{ $carbon::now()->format('Y-m-d\Th:i') }}"> --}}
+                                                <input type="date" class="form-control" name="to_complete_by_date"
+                                                    min="{{ $carbon::now()->toDateString() }}">
+                                                <input type="time" class="form-control" name="to_complete_by_time"
+                                                    min="{{ $carbon::now()->format('h:i') }}">
                                                 <input name="todo_list_id" id="todo_list_id" value="{{ $todoList->id }}"
                                                     type="text" class="form-control" hidden>
                                                 <button type="submit" class="btn btn-primary">Add Item</button>
@@ -117,11 +122,32 @@
                                                                 {!! $listItem->is_complete ? '<del>' . $listItem->name . '</del>' : $listItem->name !!}
                                                             </label>
                                                             @php
-                                                                $to_complete_by = Carbon\Carbon::create($listItem->to_complete_by)->format('m-d');
-                                                                $has_to_complete = is_null($listItem->to_complete_by) ? false : true;
+                                                                $hasCompleteDate = false;
+                                                                $hasCompleteTime = false;
+                                                                $to_complete_by_date = '';
+                                                                $to_complete_by_time = '';
+                                                                
+                                                                if (!is_null($listItem->to_complete_by_date)) {
+                                                                    $hasCompleteDate = true;
+                                                                    $to_complete_by_date = $carbon::create($listItem->to_complete_by_date)->format('M j');
+                                                                }
+                                                                
+                                                                if (!is_null($listItem->to_complete_by_time)) {
+                                                                    $hasCompleteTime = true;
+                                                                    $to_complete_by_time = $carbon::create($listItem->to_complete_by_time)->format('h:ia');
+                                                                }
                                                             @endphp
-                                                            <small
-                                                                class="text-muted float-end me-5">{{ $has_to_complete ? $to_complete_by : '' }}</small>
+                                                            <small class="text-muted float-end me-3">
+                                                                @php
+                                                                    if ($hasCompleteDate && $hasCompleteTime) {
+                                                                        echo $to_complete_by_date . ', ' . $to_complete_by_time;
+                                                                    } elseif ($hasCompleteDate) {
+                                                                        echo $to_complete_by_date;
+                                                                    } elseif ($hasCompleteTime) {
+                                                                        echo $to_complete_by_time;
+                                                                    }
+                                                                @endphp
+                                                            </small>
                                                         </form>
                                                     </div>
 
@@ -131,12 +157,16 @@
                                                         @csrf
                                                         <div class="input-group input-group-sm">
                                                             <input name="name" id="sublist_item_name{{ $listItem->id }}"
-                                                                type="text" class="form-control w-50"
+                                                                type="text" class="form-control w-25"
                                                                 placeholder="Add sub task" hidden required>
-                                                            <input type="date" class="form-control w-25"
-                                                                name="to_complete_by"
-                                                                id="sublist_item_date{{ $listItem->id }}"
-                                                                min="{{ Carbon\Carbon::now()->toDateString() }}" hidden>
+                                                            <input type="date" class="form-control"
+                                                                name="to_complete_by_date"
+                                                                id="sublist_item_date{{ $listItem->id }}" hidden
+                                                                min="{{ $carbon::now()->toDateString() }}" max="">
+                                                            <input type="time" class="form-control"
+                                                                name="to_complete_by_time"
+                                                                id="sublist_item_time{{ $listItem->id }}" hidden
+                                                                min="{{ $carbon::now()->format('h:i') }}">
                                                             <input name="todo_list_id" id="todo_list_id"
                                                                 value="{{ $todoList->id }}" type="text"
                                                                 class="form-control" hidden>
@@ -156,20 +186,20 @@
                                                             <a href="#"
                                                                 onclick="document.getElementById('sublist_item_name{{ $listItem->id }}').removeAttribute('hidden');
                                                                     document.getElementById('sublist_item_date{{ $listItem->id }}').removeAttribute('hidden');
+                                                                    document.getElementById('sublist_item_time{{ $listItem->id }}').removeAttribute('hidden');
                                                                     document.getElementById('sublist_item_button{{ $listItem->id }}').removeAttribute('hidden');">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="18"
-                                                                    height="18" fill="currentColor"
-                                                                    class="bi bi-node-plus me-2" viewBox="0 0 16 16">
-                                                                    <path fill-rule="evenodd"
-                                                                        d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
-                                                                </svg>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-plus-circle me-1" viewBox="0 0 16 16">
+                                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                                                  </svg>
                                                             </a>
 
                                                             <form class="row float-end" method="POST" id="delete_item"
                                                                 action="{{ route('listItems.destroy', $listItem) }}">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <a onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
+                                                                <a
+                                                                    onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12"
                                                                         height="12" fill="currentColor"
                                                                         class="bi bi-trash3 link-danger"
@@ -185,7 +215,8 @@
                                                     {{-- Sublist Items --}}
                                                     <ul class="list-group list-group-flush">
                                                         @forelse ($listItem->subListItems as $subItem)
-                                                            <li class="list-group-item position-relative border-0 pb-0">
+                                                            <li
+                                                                class="list-group-item list-group-item-action position-relative border-0 pb-0">
                                                                 <div class="form-check">
                                                                     <form method="POST"
                                                                         action="{{ route('listItems.update', $subItem) }}">
@@ -200,11 +231,32 @@
                                                                             {!! $subItem->is_complete ? '<del>' . $subItem->name . '</del>' : $subItem->name !!}
                                                                         </label>
                                                                         @php
-                                                                            $to_complete_by = Carbon\Carbon::create($subItem->to_complete_by)->format('m-d');
-                                                                            $has_to_complete = is_null($subItem->to_complete_by) ? false : true;
+                                                                            $hasCompleteDate = false;
+                                                                            $hasCompleteTime = false;
+                                                                            $to_complete_by_date = '';
+                                                                            $to_complete_by_time = '';
+                                                                            
+                                                                            if (!is_null($subItem->to_complete_by_date)) {
+                                                                                $hasCompleteDate = true;
+                                                                                $to_complete_by_date = $carbon::create($subItem->to_complete_by_date)->format('M j');
+                                                                            }
+                                                                            
+                                                                            if (!is_null($subItem->to_complete_by_time)) {
+                                                                                $hasCompleteTime = true;
+                                                                                $to_complete_by_time = $carbon::create($subItem->to_complete_by_time)->format('h:ia');
+                                                                            }
                                                                         @endphp
-                                                                        <small
-                                                                            class="text-muted  float-end me-4">{{ $has_to_complete ? $to_complete_by : '' }}</small>
+                                                                        <small class="text-muted float-end">
+                                                                            @php
+                                                                                if ($hasCompleteDate && $hasCompleteTime) {
+                                                                                    echo $to_complete_by_date . ', ' . $to_complete_by_time;
+                                                                                } elseif ($hasCompleteDate) {
+                                                                                    echo $to_complete_by_date;
+                                                                                } elseif ($hasCompleteTime) {
+                                                                                    echo $to_complete_by_time;
+                                                                                }
+                                                                            @endphp
+                                                                        </small>
                                                                     </form>
 
                                                                     <form
