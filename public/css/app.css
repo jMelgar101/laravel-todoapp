@@ -5,7 +5,7 @@
 .items-list {
     height: 450px;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .action-icons {
