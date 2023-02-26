@@ -26,6 +26,10 @@ class TodoListController extends Controller
             ->paginate(7);
 
         foreach($todoLists as $todoList) {
+            if (!ListItem::where('todo_list_id', $todoList->id)->exists()) {
+                continue;
+            }
+
             $itemsCount = ListItem::where([
                 'is_complete' => 0,
                 'todo_list_id' => $todoList->id,
