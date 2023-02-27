@@ -43,11 +43,11 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the TodoLists for the User.
+     * Get the Checklists for the User.
      */
-    public function todoLists()
+    public function checklists()
     {
-        return $this->hasMany(TodoList::class);
+        return $this->hasMany(Checklist::class);
     }
 
     /**

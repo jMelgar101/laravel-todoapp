@@ -8,7 +8,7 @@
                     <div class="card h-100 d-flex flex-column justify-content-between">
                         <div class="list-group list-group-flush" id="list-tab" role="tablist">
                             <div class="list-group-item">
-                                <form class="row" method="POST" action="{{ route('todoLists.store') }}">
+                                <form class="row" method="POST" action="{{ route('checklists.store') }}">
                                     @csrf
                                     <div class="input-group">
                                         <input name="title" type="text" class="form-control"
@@ -19,24 +19,24 @@
                             </div>
 
                             <?php $carbon = Carbon\Carbon::class; ?>
-                            @forelse ($todoLists as $todoList)
+                            @forelse ($checklists as $checklist)
                                 @php
-                                    $lastUpdated = $carbon::parse($todoList->updated_at)->diffForHumans(null, null, true);
-                                    $tabId = $todoList->slug . $todoList->id;
+                                    $lastUpdated = $carbon::parse($checklist->updated_at)->diffForHumans(null, null, true);
+                                    $tabId = $checklist->slug . $checklist->id;
                                     $setActive = $loop->first ? 'active' : '';
                                     
-                                    $subTitle = empty($todoList->listItems->first()) ? 'No additional text' : $todoList->listItems->first()->name;
+                                    $subTitle = empty($checklist->listItems->first()) ? 'No additional text' : $checklist->listItems->first()->name;
                                 @endphp
                                 <a class="list-group-item list-group-item-action {{ $setActive }}"
-                                    alt-text="{{ $todoList->slug }}" id="{{ $tabId }}-list" data-bs-toggle="list"
+                                    alt-text="{{ $checklist->slug }}" id="{{ $tabId }}-list" data-bs-toggle="list"
                                     href="#{{ $tabId }}" role="tab" aria-controls="{{ $tabId }}">
                                     <strong class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                        {{ Str::title($todoList->title) }}
+                                        {{ Str::title($checklist->title) }}
                                         <small>{{ $lastUpdated }}</small>
                                     </strong>
                                     <small>
                                         {{ $subTitle }}
-                                        {!! $todoList->is_all_complete ? '<span class="badge text-bg-success float-end">Completed</span>' : '' !!}
+                                        {!! $checklist->is_all_complete ? '<span class="badge text-bg-success float-end">Completed</span>' : '' !!}
                                     </small>
                                 </a>
                             @empty
@@ -44,34 +44,34 @@
                             @endforelse
                         </div>
 
-                        @unless($todoLists->isEmpty())
+                        @unless($checklists->isEmpty())
                             <div class="card-footer">
                                 <ul class="pagination justify-content-center mb-0">
-                                    {{ $todoLists->links() }}
+                                    {{ $checklists->links() }}
                                 </ul>
                             </div>
                         @endunless
                     </div>
 
-                    @if ($todoLists->isEmpty())
+                    @if ($checklists->isEmpty())
                         <div class="card h-100 d-flex flex-column justify-content-between text-center">
                             <div class="card-header">Your task items will display here. Create a new one!</div>
                         </div>
                     @else
                         <div class="card h-100 d-flex flex-column justify-content-between tab-content" id="nav-tabContent">
-                            @foreach ($todoLists as $todoList)
+                            @foreach ($checklists as $checklist)
                                 @php
-                                    $tabContentId = $todoList->slug . $todoList->id;
+                                    $tabContentId = $checklist->slug . $checklist->id;
                                     $setActive = $loop->first ? 'active' : '';
                                 @endphp
 
                                 <div class="tab-pane fade show {{ $setActive }}" id="{{ $tabContentId }}"
                                     role="tabpanel" aria-labelledby="{{ $tabContentId }}-list">
                                     <div class="card-header">
-                                        <strong><u>{{ Str::title($todoList->title) }}</u></strong>
+                                        <strong><u>{{ Str::title($checklist->title) }}</u></strong>
 
                                         <form class="row float-end" method="POST" id="delete_list"
-                                            action="{{ route('todoLists.destroy', $todoList) }}">
+                                            action="{{ route('checklists.destroy', $checklist) }}">
                                             @csrf
                                             @method('DELETE')
                                             <a
@@ -98,14 +98,14 @@
                                                     min="{{ $carbon::now()->toDateString() }}">
                                                 <input type="time" class="form-control" name="to_complete_by_time"
                                                     min="{{ $carbon::now()->format('h:i') }}">
-                                                <input name="todo_list_id" id="todo_list_id" value="{{ $todoList->id }}"
+                                                <input name="checklist_id" id="checklist_id" value="{{ $checklist->id }}"
                                                     type="text" class="form-control" hidden>
                                                 <button type="submit" class="btn btn-primary">Add Item</button>
                                             </div>
                                         </form>
 
                                         <ul class="list-group list-group-flush items-list" id="items-list">
-                                            @forelse ($todoList->listItems as $listItem)
+                                            @forelse ($checklist->listItems as $listItem)
                                                 {{-- Todo List items --}}
                                                 <li class="list-group-item position-relative">
                                                     <div class="form-check list-group-item-action">
@@ -168,8 +168,8 @@
                                                                 name="to_complete_by_time"
                                                                 id="sublist_item_time{{ $listItem->id }}" hidden
                                                                 min="{{ $carbon::now()->format('h:i') }}">
-                                                            <input name="todo_list_id" id="todo_list_id"
-                                                                value="{{ $todoList->id }}" type="text"
+                                                            <input name="checklist_id" id="checklist_id"
+                                                                value="{{ $checklist->id }}" type="text"
                                                                 class="form-control" hidden>
                                                             <input name="parent_id" id="parent_id"
                                                                 value="{{ $listItem->id }}" type="text"

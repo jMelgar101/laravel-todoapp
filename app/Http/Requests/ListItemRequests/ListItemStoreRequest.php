@@ -29,7 +29,7 @@ class ListItemStoreRequest extends FormRequest
             'to_complete_by_date'   => ['nullable', 'date'],
             'to_complete_by_time'   => ['nullable', 'date_format:H:i'],
             'completed_at'          => ['nullable', 'date'],
-            'todo_list_id'          => ['required'],
+            'checklist_id'          => ['required'],
             'parent_id'             => ['nullable'],
         ];
     }

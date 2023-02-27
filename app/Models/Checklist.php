@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TodoList extends Model
+class Checklist extends Model
 {
     use HasFactory;
 
@@ -31,7 +31,7 @@ class TodoList extends Model
     ];
 
     /**
-     * Get the User that owns the TodoList.
+     * Get the User that owns the Checklist.
      */
     public function user()
     {
@@ -39,7 +39,7 @@ class TodoList extends Model
     }
 
     /**
-     * Get the ListItems for the TodoList.
+     * Get the ListItems for the Checklist.
      */
     public function listItems()
     {

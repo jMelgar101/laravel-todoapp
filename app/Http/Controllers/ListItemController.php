@@ -6,7 +6,7 @@ use App\Http\Requests\ListItemRequests\ListItemStoreRequest;
 use App\Http\Requests\ListItemRequests\ListItemUpdateRequest;
 
 use App\Models\ListItem;
-use App\Models\TodoList;
+use App\Models\Checklist;
 
 use Illuminate\Http\RedirectResponse;
 
@@ -26,9 +26,9 @@ class ListItemController extends Controller
         $request->user()->listItems()->create($request->validated());
 
         // to remove...
-        TodoList::doesntHave('listItems')->where('user_id', auth()->id())->delete();
+        Checklist::doesntHave('listItems')->where('user_id', auth()->id())->delete();
 
-        return redirect(route('todoLists.index'));
+        return redirect(route('checklists.index'));
     }
 
     /**
@@ -63,7 +63,7 @@ class ListItemController extends Controller
             $listItem->sublistItems()->update($validated);
         }
 
-        return redirect(route('todoLists.index'));
+        return redirect(route('checklists.index'));
     }
 
     /**
@@ -76,6 +76,6 @@ class ListItemController extends Controller
     {
         $listItem->delete();
 
-        return redirect(route('todoLists.index'));
+        return redirect(route('checklists.index'));
     }
 }

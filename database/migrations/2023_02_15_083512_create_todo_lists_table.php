@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('todo_lists', function (Blueprint $table) {
+        Schema::create('checklists', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('slug')->nullable();
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('todo_lists');
+        Schema::dropIfExists('checklists');
     }
 };

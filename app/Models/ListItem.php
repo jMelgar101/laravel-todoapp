@@ -21,7 +21,7 @@ class ListItem extends Model
         'to_complete_by_time',
         'completed_at',
         'user_id',
-        'todo_list_id',
+        'checklist_id',
         'parent_id',
     ];
 
@@ -43,7 +43,7 @@ class ListItem extends Model
      * @var array
      */
     protected $touches = [
-        'todoList',
+        'checklist',
     ];
 
     /**
@@ -55,11 +55,11 @@ class ListItem extends Model
     }
 
     /**
-     * Get the TodoList that owns the ListItem.
+     * Get the Checklist that owns the ListItem.
      */
-    public function todoList()
+    public function checklist()
     {
-        return $this->belongsTo(TodoList::class);
+        return $this->belongsTo(Checklist::class);
     }
 
     /**

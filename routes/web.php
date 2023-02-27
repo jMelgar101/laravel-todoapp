@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\TodoListController;
+use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\ListItemController;
 
 /*
@@ -19,9 +19,9 @@ use App\Http\Controllers\ListItemController;
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/', [TodoListController::class, 'index']);
+    Route::get('/', [ChecklistController::class, 'index']);
 
-    Route::resource('/todoLists', TodoListController::class)
+    Route::resource('/checklists', ChecklistController::class)
         ->only(['index', 'store', 'update', 'destroy']);
 
     Route::resource('/listItems', ListItemController::class)
