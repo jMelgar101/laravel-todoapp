@@ -19,7 +19,7 @@ class ChecklistFactory extends Factory
      */
     public function definition()
     {
-        $title = fake()->sentence(rand(1, 3));
+        $title = fake()->words(rand(1, 3), true);
         $slug = Str::slug($title);
 
         return [
