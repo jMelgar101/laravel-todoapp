@@ -26,7 +26,9 @@ class TodoListController extends Controller
             ->paginate(7);
 
         foreach($todoLists as $todoList) {
-            if (!ListItem::where('todo_list_id', $todoList->id)->exists()) {
+            if (ListItem::where('todo_list_id', $todoList->id)->doesntExist()) {
+                $todoList->update(['is_all_complete' => 0]);
+
                 continue;
             }
 
