@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ChecklistRequests\ChecklistStoreRequest;
 
 use App\Models\Checklist;
-use App\Models\ListItem;
+use App\Models\Item;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\RedirectResponse;
@@ -26,13 +26,13 @@ class ChecklistController extends Controller
             ->paginate(7);
 
         foreach($checklists as $checklist) {
-            if (ListItem::where('checklist_id', $checklist->id)->doesntExist()) {
+            if (Item::where('checklist_id', $checklist->id)->doesntExist()) {
                 $checklist->update(['is_all_complete' => 0]);
 
                 continue;
             }
 
-            $itemsCount = ListItem::where([
+            $itemsCount = Item::where([
                 'is_complete' => 0,
                 'checklist_id' => $checklist->id,
             ])->count();

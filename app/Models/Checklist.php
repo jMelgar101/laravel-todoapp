@@ -39,10 +39,10 @@ class Checklist extends Model
     }
 
     /**
-     * Get the ListItems for the Checklist.
+     * Get the Items for the Checklist.
      */
-    public function listItems()
+    public function items()
     {
-        return $this->hasMany(ListItem::class)->where('user_id', auth()->id())->whereNull('parent_id');
+        return $this->hasMany(Item::class)->where('user_id', auth()->id())->whereNull('parent_id');
     }
 }

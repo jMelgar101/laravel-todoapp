@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ChecklistController;
-use App\Http\Controllers\ListItemController;
+use App\Http\Controllers\ItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +24,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('/checklists', ChecklistController::class)
         ->only(['index', 'store', 'update', 'destroy']);
 
-    Route::resource('/listItems', ListItemController::class)
+    Route::resource('/items', ItemController::class)
         ->only(['store', 'update', 'destroy']);
 });

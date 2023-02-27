@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ListItem extends Model
+class Item extends Model
 {
     use HasFactory;
 
@@ -47,7 +47,7 @@ class ListItem extends Model
     ];
 
     /**
-     * Get the User that owns the ListItem.
+     * Get the User that owns the Item.
      */
     public function user()
     {
@@ -55,7 +55,7 @@ class ListItem extends Model
     }
 
     /**
-     * Get the Checklist that owns the ListItem.
+     * Get the Checklist that owns the Item.
      */
     public function checklist()
     {
@@ -63,10 +63,10 @@ class ListItem extends Model
     }
 
     /**
-     * Get nested ListItems
+     * Get nested Items
      */
-    public function subListItems()
+    public function subItems()
     {
-        return $this->hasMany(ListItem::class, 'parent_id')->where('user_id', auth()->id());
+        return $this->hasMany(Item::class, 'parent_id')->where('user_id', auth()->id());
     }
 }

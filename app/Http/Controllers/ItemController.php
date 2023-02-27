@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ListItemRequests\ListItemStoreRequest;
-use App\Http\Requests\ListItemRequests\ListItemUpdateRequest;
+use App\Http\Requests\ItemRequests\ItemStoreRequest;
+use App\Http\Requests\ItemRequests\ItemUpdateRequest;
 
-use App\Models\ListItem;
+use App\Models\Item;
 use App\Models\Checklist;
 
 use Illuminate\Http\RedirectResponse;
@@ -13,20 +13,20 @@ use Illuminate\Http\RedirectResponse;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
-class ListItemController extends Controller
+class ItemController extends Controller
 {
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\ListItemRequests\ListItemStoreRequest  $request
+     * @param  \Illuminate\Http\ItemRequests\ItemStoreRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(ListItemStoreRequest $request): RedirectResponse
+    public function store(ItemStoreRequest $request): RedirectResponse
     {
-        $request->user()->listItems()->create($request->validated());
+        $request->user()->items()->create($request->validated());
 
         // to remove...
-        Checklist::doesntHave('listItems')->where('user_id', auth()->id())->delete();
+        Checklist::doesntHave('items')->where('user_id', auth()->id())->delete();
 
         return redirect(route('checklists.index'));
     }
@@ -34,11 +34,11 @@ class ListItemController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\ListItemRequests\ListItemUpdateRequest  $request
-     * @param  \App\Models\ListItem  $listItem
+     * @param  \Illuminate\Http\ItemRequests\ItemUpdateRequest  $request
+     * @param  \App\Models\Item  $item
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(ListItemUpdateRequest $request, ListItem $listItem): RedirectResponse
+    public function update(ItemUpdateRequest $request, Item $item): RedirectResponse
     {
         $validated = $request->validated();
         $validated['is_complete'] = $request->has('is_complete') ? 1 : 0;
@@ -47,10 +47,10 @@ class ListItemController extends Controller
             $validated['completed_at'] = Carbon::now()->toDateString();
         }
 
-        $listItem->update($validated);
+        $item->update($validated);
 
         if ($request->has('parent_id')) {
-            $childItemsCount = ListItem::where(['parent_id' => $request->parent_id, 'is_complete' => 0])->count();
+            $childItemsCount = Item::where(['parent_id' => $request->parent_id, 'is_complete' => 0])->count();
 
             $isParentComplete = 0;
 
@@ -58,9 +58,9 @@ class ListItemController extends Controller
                 $isParentComplete = 1;
             }
 
-            ListItem::where('id', $request->parent_id)->update(['is_complete' => $isParentComplete]);
+            Item::where('id', $request->parent_id)->update(['is_complete' => $isParentComplete]);
         } else {
-            $listItem->sublistItems()->update($validated);
+            $item->subItems()->update($validated);
         }
 
         return redirect(route('checklists.index'));
@@ -69,12 +69,12 @@ class ListItemController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ListItem  $listItem
+     * @param  \App\Models\Item  $item
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(ListItem $listItem): RedirectResponse
+    public function destroy(Item $item): RedirectResponse
     {
-        $listItem->delete();
+        $item->delete();
 
         return redirect(route('checklists.index'));
     }

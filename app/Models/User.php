@@ -51,10 +51,10 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the ListItems for the User.
+     * Get the Items for the User.
      */
-    public function listItems()
+    public function items()
     {
-        return $this->hasMany(ListItem::class);
+        return $this->hasMany(Item::class);
     }
 }

@@ -25,7 +25,7 @@
                                     $tabId = $checklist->slug . $checklist->id;
                                     $setActive = $loop->first ? 'active' : '';
                                     
-                                    $subTitle = empty($checklist->listItems->first()) ? 'No additional text' : $checklist->listItems->first()->name;
+                                    $subTitle = empty($checklist->items->first()) ? 'No additional text' : $checklist->items->first()->name;
                                 @endphp
                                 <a class="list-group-item list-group-item-action {{ $setActive }}"
                                     alt-text="{{ $checklist->slug }}" id="{{ $tabId }}-list" data-bs-toggle="list"
@@ -86,10 +86,10 @@
                                         </form>
                                     </div>
                                     <div class="card-body">
-                                        <form class="mb-3" method="POST" action="{{ route('listItems.store') }}">
+                                        <form class="mb-3" method="POST" action="{{ route('items.store') }}">
                                             @csrf
                                             <div class="input-group input-group-sm">
-                                                <input name="name" id="list_item_name" type="text"
+                                                <input name="name" id="item_name" type="text"
                                                     class="form-control w-25" placeholder="Add new task"
                                                     aria-label="Add new task" required>
                                                 {{-- <input type="datetime-local" class="form-control" name="to_complete_by"
@@ -105,21 +105,21 @@
                                         </form>
 
                                         <ul class="list-group list-group-flush items-list" id="items-list">
-                                            @forelse ($checklist->listItems as $listItem)
+                                            @forelse ($checklist->items as $item)
                                                 {{-- Todo List items --}}
                                                 <li class="list-group-item position-relative">
                                                     <div class="form-check list-group-item-action">
                                                         <form method="POST"
-                                                            action="{{ route('listItems.update', $listItem) }}">
+                                                            action="{{ route('items.update', $item) }}">
                                                             @csrf
                                                             @method('PATCH')
                                                             <input class="form-check-input" type="checkbox"
                                                                 name="is_complete" value="1"
-                                                                id="is_complete_{{ $listItem->id }}"
-                                                                {{ $listItem->is_complete ? 'checked' : '' }}
+                                                                id="is_complete_{{ $item->id }}"
+                                                                {{ $item->is_complete ? 'checked' : '' }}
                                                                 onchange="event.preventDefault(); this.closest('form').submit();">
-                                                            <label class="form-check-label" for="is_complete_{{ $listItem->id }}">
-                                                                {!! $listItem->is_complete ? '<del>' . $listItem->name . '</del>' : $listItem->name !!}
+                                                            <label class="form-check-label" for="is_complete_{{ $item->id }}">
+                                                                {!! $item->is_complete ? '<del>' . $item->name . '</del>' : $item->name !!}
                                                             </label>
                                                             @php
                                                                 $hasCompleteDate = false;
@@ -127,14 +127,14 @@
                                                                 $to_complete_by_date = '';
                                                                 $to_complete_by_time = '';
                                                                 
-                                                                if (!is_null($listItem->to_complete_by_date)) {
+                                                                if (!is_null($item->to_complete_by_date)) {
                                                                     $hasCompleteDate = true;
-                                                                    $to_complete_by_date = $carbon::create($listItem->to_complete_by_date)->format('M j');
+                                                                    $to_complete_by_date = $carbon::create($item->to_complete_by_date)->format('M j');
                                                                 }
                                                                 
-                                                                if (!is_null($listItem->to_complete_by_time)) {
+                                                                if (!is_null($item->to_complete_by_time)) {
                                                                     $hasCompleteTime = true;
-                                                                    $to_complete_by_time = $carbon::create($listItem->to_complete_by_time)->format('h:ia');
+                                                                    $to_complete_by_time = $carbon::create($item->to_complete_by_time)->format('h:ia');
                                                                 }
                                                             @endphp
                                                             <small class="text-muted float-end me-3">
@@ -153,42 +153,42 @@
 
                                                     {{-- Add sublist item --}}
                                                     <form class="form-group" method="POST"
-                                                        action="{{ route('listItems.store', $listItem) }}">
+                                                        action="{{ route('items.store', $item) }}">
                                                         @csrf
                                                         <div class="input-group input-group-sm">
-                                                            <input name="name" id="sublist_item_name{{ $listItem->id }}"
+                                                            <input name="name" id="subItem_name{{ $item->id }}"
                                                                 type="text" class="form-control w-25"
                                                                 placeholder="Add sub task" hidden required>
                                                             <input type="date" class="form-control"
                                                                 name="to_complete_by_date"
-                                                                id="sublist_item_date{{ $listItem->id }}" hidden
+                                                                id="subItem_date{{ $item->id }}" hidden
                                                                 min="{{ $carbon::now()->toDateString() }}"
                                                                 max="{{ $hasCompleteDate ?  $carbon::create($to_complete_by_date)->toDateString() : '' }}">
                                                             <input type="time" class="form-control"
                                                                 name="to_complete_by_time"
-                                                                id="sublist_item_time{{ $listItem->id }}" hidden
+                                                                id="subItem_time{{ $item->id }}" hidden
                                                                 min="{{ $carbon::now()->format('h:i') }}">
                                                             <input name="checklist_id" id="checklist_id"
                                                                 value="{{ $checklist->id }}" type="text"
                                                                 class="form-control" hidden>
                                                             <input name="parent_id" id="parent_id"
-                                                                value="{{ $listItem->id }}" type="text"
+                                                                value="{{ $item->id }}" type="text"
                                                                 class="form-control" hidden>
                                                             <button type="submit" class="btn btn-primary"
-                                                                id="sublist_item_button{{ $listItem->id }}"
+                                                                id="subItem_button{{ $item->id }}"
                                                                 hidden>Add</button>
                                                         </div>
                                                     </form>
 
                                                     {{-- List Item Action buttons --}}
-                                                    @if ($listItem->user->is(auth()->user()))
+                                                    @if ($item->user->is(auth()->user()))
                                                         <div
                                                             class="float-end position-absolute top-0 end-0 mt-1 action-icons">
                                                             <a href="#"
-                                                                onclick="document.getElementById('sublist_item_name{{ $listItem->id }}').removeAttribute('hidden');
-                                                                    document.getElementById('sublist_item_date{{ $listItem->id }}').removeAttribute('hidden');
-                                                                    document.getElementById('sublist_item_time{{ $listItem->id }}').removeAttribute('hidden');
-                                                                    document.getElementById('sublist_item_button{{ $listItem->id }}').removeAttribute('hidden');">
+                                                                onclick="document.getElementById('subItem_name{{ $item->id }}').removeAttribute('hidden');
+                                                                    document.getElementById('subItem_date{{ $item->id }}').removeAttribute('hidden');
+                                                                    document.getElementById('subItem_time{{ $item->id }}').removeAttribute('hidden');
+                                                                    document.getElementById('subItem_button{{ $item->id }}').removeAttribute('hidden');">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12"
                                                                     height="12" fill="currentColor"
                                                                     class="bi bi-plus-circle me-1" viewBox="0 0 16 16">
@@ -198,7 +198,7 @@
                                                             </a>
 
                                                             <form class="row float-end" method="POST" id="delete_item"
-                                                                action="{{ route('listItems.destroy', $listItem) }}">
+                                                                action="{{ route('items.destroy', $item) }}">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <a
@@ -217,12 +217,12 @@
 
                                                     {{-- Sublist Items --}}
                                                     <ul class="list-group list-group-flush">
-                                                        @forelse ($listItem->subListItems as $subItem)
+                                                        @forelse ($item->subItems as $subItem)
                                                             <li
                                                                 class="list-group-item position-relative border-0 pb-0">
                                                                 <div class="form-check list-group-item-action">
                                                                     <form method="POST"
-                                                                        action="{{ route('listItems.update', $subItem) }}">
+                                                                        action="{{ route('items.update', $subItem) }}">
                                                                         @csrf
                                                                         @method('PATCH')
                                                                         <input class="form-check-input" type="checkbox"
@@ -266,10 +266,10 @@
                                                                     <form
                                                                         class="float-end position-absolute top-0 end-0 mt-1"
                                                                         method="POST" id="delete_item"
-                                                                        action="{{ route('listItems.destroy', $subItem) }}">
+                                                                        action="{{ route('items.destroy', $subItem) }}">
                                                                         @csrf
                                                                         @method('DELETE')
-                                                                        <a href="{{ route('listItems.destroy', $subItem) }}"
+                                                                        <a href="{{ route('items.destroy', $subItem) }}"
                                                                             class="action-icons"
                                                                             onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
                                                                             <svg xmlns="http://www.w3.org/2000/svg"
