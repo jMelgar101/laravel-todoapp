@@ -49,7 +49,7 @@ class ChecklistRepository implements ChecklistInterface {
 
     public function updateChecklist($checklistParams, $checklist)
     {
-        $checklist->update([
+        return $checklist->update([
             ...$checklistParams,
             'slug' => Str::slug($checklistParams['title']),
         ]);
