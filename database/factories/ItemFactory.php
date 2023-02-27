@@ -27,7 +27,7 @@ class ItemFactory extends Factory
             'name' => fake()->sentence(rand(2, 3)),
             'to_complete_by_date' => fake()->dateTimeBetween('now', '+10 months'),
             'to_complete_by_time' => fake()->time('H:i'),
-            'is_complete' => rand(0, 1),
+            'is_complete' => $isComplete,
             'completed_at' => $completedAt,
         ];
     }
