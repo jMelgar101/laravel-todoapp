@@ -5,16 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ItemRequests\ItemStoreRequest;
 use App\Http\Requests\ItemRequests\ItemUpdateRequest;
 
+use App\Repositories\ItemRepository;
 use App\Models\Item;
-use App\Models\Checklist;
 
 use Illuminate\Http\RedirectResponse;
 
-use Carbon\Carbon;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-
 class ItemController extends Controller
 {
+    private ItemRepository $itemRepository;
+
+    public function __construct(ItemRepository $itemRepository) 
+    {
+        $this->itemRepository = $itemRepository;
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -23,10 +27,7 @@ class ItemController extends Controller
      */
     public function store(ItemStoreRequest $request): RedirectResponse
     {
-        $request->user()->items()->create($request->validated());
-
-        // to remove...
-        Checklist::doesntHave('items')->where('user_id', auth()->id())->delete();
+        $this->itemRepository->storeItem($request->validated());
 
         return redirect(route('checklists.index'));
     }
@@ -40,28 +41,7 @@ class ItemController extends Controller
      */
     public function update(ItemUpdateRequest $request, Item $item): RedirectResponse
     {
-        $validated = $request->validated();
-        $validated['is_complete'] = $request->has('is_complete') ? 1 : 0;
-
-        if ($validated['is_complete'] === 1) {
-            $validated['completed_at'] = Carbon::now()->toDateString();
-        }
-
-        $item->update($validated);
-
-        if ($request->has('parent_id')) {
-            $childItemsCount = Item::where(['parent_id' => $request->parent_id, 'is_complete' => 0])->count();
-
-            $isParentComplete = 0;
-
-            if ($childItemsCount < 1) {
-                $isParentComplete = 1;
-            }
-
-            Item::where('id', $request->parent_id)->update(['is_complete' => $isParentComplete]);
-        } else {
-            $item->subItems()->update($validated);
-        }
+        $this->itemRepository->updateItem($request->validated(), $item);
 
         return redirect(route('checklists.index'));
     }
@@ -74,7 +54,7 @@ class ItemController extends Controller
      */
     public function destroy(Item $item): RedirectResponse
     {
-        $item->delete();
+        $this->itemRepository->deleteItem($item);
 
         return redirect(route('checklists.index'));
     }
