@@ -3,16 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ChecklistRequests\ChecklistStoreRequest;
-
+use App\Repositories\ChecklistRepository;
 use App\Models\Checklist;
-use App\Models\Item;
 
-use Illuminate\Support\Str;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class ChecklistController extends Controller
 {
+    private ChecklistRepository $checklistRepository;
+
+    public function __construct(ChecklistRepository $checklistRepository) 
+    {
+        $this->checklistRepository = $checklistRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -20,25 +25,7 @@ class ChecklistController extends Controller
      */
     public function index(): View
     {
-        $checklists = Checklist::with('user')
-            ->where('user_id', auth()->id())
-            ->latest('updated_at')
-            ->paginate(7);
-
-        foreach($checklists as $checklist) {
-            if (Item::where('checklist_id', $checklist->id)->doesntExist()) {
-                $checklist->update(['is_all_complete' => 0]);
-
-                continue;
-            }
-
-            $itemsCount = Item::where([
-                'is_complete' => 0,
-                'checklist_id' => $checklist->id,
-            ])->count();
-            
-            $checklist->update(['is_all_complete' => ($itemsCount > 0) ? 0 : 1]);
-        }
+        $checklists = $this->checklistRepository->getUserChecklists();
 
         return view('todo.index', compact('checklists'));
     }
@@ -51,10 +38,7 @@ class ChecklistController extends Controller
      */
     public function store(ChecklistStoreRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-        $validated['slug'] = Str::slug($request->title);
-
-        $request->user()->checklists()->create($validated);
+        $this->checklistRepository->storeChecklist($request->validated());
 
         return redirect(route('checklists.index'));
     }
@@ -68,7 +52,7 @@ class ChecklistController extends Controller
      */
     public function update(ChecklistStoreRequest $request, Checklist $checklist): RedirectResponse
     {
-        $checklist->update($request->validated());
+        $this->checklistRepository->updateChecklist($request->validated(), $checklist);
 
         return redirect(route('checklists.index'));
     }
@@ -81,7 +65,7 @@ class ChecklistController extends Controller
      */
     public function destroy(Checklist $checklist): RedirectResponse
     {
-        $checklist->delete();
+        $this->checklistRepository->deleteChecklist($checklist);
 
         return redirect(route('checklists.index'));
     }
