@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
                 ->count(rand(1, 6))
                 ->for($checklist)
                 ->for($user)
-                ->hasSubItems(rand(1, 3), [
+                ->hasSubItems(rand(1, 6), [
                     'checklist_id' => $checklist->id,
                     'user_id' => $user->id,
                     'to_complete_by_date' => null,
