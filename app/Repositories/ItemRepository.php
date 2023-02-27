@@ -8,8 +8,15 @@ use App\Models\Item;
 
 use Carbon\Carbon;
 
-class ItemRepository implements ItemInterface {
-    public function storeItem($itemParams)
+class ItemRepository implements ItemInterface
+{
+    /**
+     * Store a newly created checklist item
+     *
+     * @param  array validated $itemParams
+     * @return \App\Models\Item $createdItem
+     */
+    public function storeItem($itemParams): Item
     {
         $createdItem = Item::create([
             ...$itemParams,
@@ -22,7 +29,14 @@ class ItemRepository implements ItemInterface {
         return $createdItem;
     }
 
-    public function updateItem($itemParams, $item)
+    /**
+     * Update the specified checklist item.
+     *
+     * @param  array  $itemParams
+     * @param  \App\Models\Item  $item
+     * @return bool
+     */
+    public function updateItem($itemParams, $item): bool
     {
         $itemParams['is_complete'] = (isset($itemParams['is_complete'])) ? 1 : 0;
 
@@ -49,7 +63,14 @@ class ItemRepository implements ItemInterface {
         return $updatedItem;
     }
 
-    public function deleteItem($item){
+    /**
+     * Remove the specified checklist item
+     *
+     * @param  \App\Models\Item  $item
+     * @return bool
+     */
+    public function deleteItem($item): bool
+    {
         return $item->delete();
     }
 }
