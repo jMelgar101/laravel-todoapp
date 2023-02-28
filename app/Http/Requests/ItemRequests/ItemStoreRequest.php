@@ -25,7 +25,6 @@ class ItemStoreRequest extends FormRequest
     {
         return [
             'name'                  => ['required', 'string', 'max:255'],
-            'is_complete'           => ['boolean'],
             'to_complete_by_date'   => ['nullable', 'date'],
             'to_complete_by_time'   => ['nullable', 'date_format:H:i'],
             'completed_at'          => ['nullable', 'date'],

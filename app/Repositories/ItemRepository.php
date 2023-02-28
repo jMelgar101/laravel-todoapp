@@ -49,11 +49,7 @@ class ItemRepository implements ItemInterface
         if (isset($itemParams['parent_id'])) {
             $childItemsCount = Item::where(['parent_id' => $itemParams['parent_id'], 'is_complete' => 0])->count();
 
-            $isParentComplete = 0;
-
-            if ($childItemsCount < 1) {
-                $isParentComplete = 1;
-            }
+            $isParentComplete = ($childItemsCount < 1) ? 1 : 0;
 
             Item::where('id', $itemParams['parent_id'])->update(['is_complete' => $isParentComplete]);
         } else {

@@ -23,10 +23,7 @@ class ChecklistRepository implements ChecklistInterface
             ->latest('updated_at')
             ->paginate(7);
 
-
-        //
-        // Should add Service
-        //
+        // check and mark Checklist if all Items are complete/incomplete
         foreach ($checklists as $checklist) {
             if (Item::where('checklist_id', $checklist->id)->doesntExist()) {
                 $checklist->update(['is_all_complete' => 0]);
