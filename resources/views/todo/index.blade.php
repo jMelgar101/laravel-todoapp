@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@inject('formatDateTime', 'App\Services\DateTimeService')
+
 @section('content')
     <div class="container-fluid">
         <div class="row justify-content-center">
@@ -109,8 +111,7 @@
                                                 {{-- Todo List items --}}
                                                 <li class="list-group-item position-relative">
                                                     <div class="form-check list-group-item-action">
-                                                        <form method="POST"
-                                                            action="{{ route('items.update', $item) }}">
+                                                        <form method="POST" action="{{ route('items.update', $item) }}">
                                                             @csrf
                                                             @method('PATCH')
                                                             <input class="form-check-input" type="checkbox"
@@ -118,35 +119,12 @@
                                                                 id="is_complete_{{ $item->id }}"
                                                                 {{ $item->is_complete ? 'checked' : '' }}
                                                                 onchange="event.preventDefault(); this.closest('form').submit();">
-                                                            <label class="form-check-label" for="is_complete_{{ $item->id }}">
+                                                            <label class="form-check-label"
+                                                                for="is_complete_{{ $item->id }}">
                                                                 {!! $item->is_complete ? '<del>' . $item->name . '</del>' : $item->name !!}
                                                             </label>
-                                                            @php
-                                                                $hasCompleteDate = false;
-                                                                $hasCompleteTime = false;
-                                                                $to_complete_by_date = '';
-                                                                $to_complete_by_time = '';
-                                                                
-                                                                if (!is_null($item->to_complete_by_date)) {
-                                                                    $hasCompleteDate = true;
-                                                                    $to_complete_by_date = $carbon::create($item->to_complete_by_date)->format('M j');
-                                                                }
-                                                                
-                                                                if (!is_null($item->to_complete_by_time)) {
-                                                                    $hasCompleteTime = true;
-                                                                    $to_complete_by_time = $carbon::create($item->to_complete_by_time)->format('h:ia');
-                                                                }
-                                                            @endphp
                                                             <small class="text-muted float-end me-3">
-                                                                @php
-                                                                    if ($hasCompleteDate && $hasCompleteTime) {
-                                                                        echo $to_complete_by_date . ', ' . $to_complete_by_time;
-                                                                    } elseif ($hasCompleteDate) {
-                                                                        echo $to_complete_by_date;
-                                                                    } elseif ($hasCompleteTime) {
-                                                                        echo $to_complete_by_time;
-                                                                    }
-                                                                @endphp
+                                                                {{ $formatDateTime->formatCompleteDateTime($item->to_complete_by_date, $item->to_complete_by_time) }}
                                                             </small>
                                                         </form>
                                                     </div>
@@ -163,7 +141,7 @@
                                                                 name="to_complete_by_date"
                                                                 id="subItem_date{{ $item->id }}" hidden
                                                                 min="{{ $carbon::now()->toDateString() }}"
-                                                                max="{{ $hasCompleteDate ?  $carbon::create($to_complete_by_date)->toDateString() : '' }}">
+                                                                max="{{ !is_null($item->to_complete_by_date) ? $carbon::create($item->to_complete_by_date)->toDateString() : '' }}">
                                                             <input type="time" class="form-control"
                                                                 name="to_complete_by_time"
                                                                 id="subItem_time{{ $item->id }}" hidden
@@ -175,8 +153,7 @@
                                                                 value="{{ $item->id }}" type="text"
                                                                 class="form-control" hidden>
                                                             <button type="submit" class="btn btn-primary"
-                                                                id="subItem_button{{ $item->id }}"
-                                                                hidden>Add</button>
+                                                                id="subItem_button{{ $item->id }}" hidden>Add</button>
                                                         </div>
                                                     </form>
 
@@ -192,8 +169,10 @@
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12"
                                                                     height="12" fill="currentColor"
                                                                     class="bi bi-plus-circle me-1" viewBox="0 0 16 16">
-                                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                                                    <path
+                                                                        d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                                                    <path
+                                                                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                                                 </svg>
                                                             </a>
 
@@ -218,8 +197,7 @@
                                                     {{-- Sublist Items --}}
                                                     <ul class="list-group list-group-flush">
                                                         @forelse ($item->subItems as $subItem)
-                                                            <li
-                                                                class="list-group-item position-relative border-0 pb-0">
+                                                            <li class="list-group-item position-relative border-0 pb-0">
                                                                 <div class="form-check list-group-item-action">
                                                                     <form method="POST"
                                                                         action="{{ route('items.update', $subItem) }}">
@@ -230,36 +208,14 @@
                                                                             id="is_complete_{{ $subItem->id }}"
                                                                             {{ $subItem->is_complete ? 'checked' : '' }}
                                                                             onchange="this.closest('form').submit();">
-                                                                        <input type="text" name="parent_id" value="{{ $subItem->parent_id }}" hidden>
-                                                                        <label class="form-check-label" for="is_complete_{{ $subItem->id }}">
+                                                                        <input type="text" name="parent_id"
+                                                                            value="{{ $subItem->parent_id }}" hidden>
+                                                                        <label class="form-check-label"
+                                                                            for="is_complete_{{ $subItem->id }}">
                                                                             {!! $subItem->is_complete ? '<del>' . $subItem->name . '</del>' : $subItem->name !!}
                                                                         </label>
-                                                                        @php
-                                                                            $hasCompleteDate = false;
-                                                                            $hasCompleteTime = false;
-                                                                            $to_complete_by_date = '';
-                                                                            $to_complete_by_time = '';
-                                                                            
-                                                                            if (!is_null($subItem->to_complete_by_date)) {
-                                                                                $hasCompleteDate = true;
-                                                                                $to_complete_by_date = $carbon::create($subItem->to_complete_by_date)->format('M j');
-                                                                            }
-                                                                            
-                                                                            if (!is_null($subItem->to_complete_by_time)) {
-                                                                                $hasCompleteTime = true;
-                                                                                $to_complete_by_time = $carbon::create($subItem->to_complete_by_time)->format('h:ia');
-                                                                            }
-                                                                        @endphp
                                                                         <small class="text-muted float-end">
-                                                                            @php
-                                                                                if ($hasCompleteDate && $hasCompleteTime) {
-                                                                                    echo $to_complete_by_date . ', ' . $to_complete_by_time;
-                                                                                } elseif ($hasCompleteDate) {
-                                                                                    echo $to_complete_by_date;
-                                                                                } elseif ($hasCompleteTime) {
-                                                                                    echo $to_complete_by_time;
-                                                                                }
-                                                                            @endphp
+                                                                            {{ $formatDateTime->formatCompleteDateTime($subItem->to_complete_by_date, $subItem->to_complete_by_time) }}
                                                                         </small>
                                                                     </form>
 
