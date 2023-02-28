@@ -39,10 +39,7 @@ class ItemRepository implements ItemInterface
     public function updateItem($itemParams, $item): bool
     {
         $itemParams['is_complete'] = (isset($itemParams['is_complete'])) ? 1 : 0;
-
-        if ($itemParams['is_complete'] === 1) {
-            $itemParams['completed_at'] = Carbon::now()->toDateString();
-        }
+        $itemParams['completed_at'] = ($itemParams['is_complete'] === 1) ? now() : null; 
 
         $updatedItem = $item->update($itemParams);
 
