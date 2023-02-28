@@ -2,9 +2,11 @@
 
 namespace App\Interfaces;
 
+use App\Models\Item;
+
 interface ItemInterface
 {
-    public function storeItem($itemParams);
-    public function updateItem($itemParams, $item);
-    public function deleteItem($item);
+    public function storeItem(array $itemParams);
+    public function updateItem(array $itemParams, Item $item);
+    public function deleteItem(Item $item);
 }

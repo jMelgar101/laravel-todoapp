@@ -14,7 +14,7 @@ class ItemRepository implements ItemInterface
      * @param  array validated $itemParams
      * @return \App\Models\Item $createdItem
      */
-    public function storeItem($itemParams): Item
+    public function storeItem(array $itemParams): Item
     {
         $createdItem = Item::create([
             ...$itemParams,
@@ -34,7 +34,7 @@ class ItemRepository implements ItemInterface
      * @param  \App\Models\Item  $item
      * @return bool
      */
-    public function updateItem($itemParams, $item): bool
+    public function updateItem(array $itemParams, Item $item): bool
     {
         $itemParams['is_complete'] = (isset($itemParams['is_complete'])) ? 1 : 0;
         $itemParams['completed_at'] = ($itemParams['is_complete'] === 1) ? now() : null;
@@ -60,7 +60,7 @@ class ItemRepository implements ItemInterface
      * @param  \App\Models\Item  $item
      * @return bool
      */
-    public function deleteItem($item): bool
+    public function deleteItem(Item $item): bool
     {
         return $item->delete();
     }

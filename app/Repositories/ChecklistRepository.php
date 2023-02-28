@@ -48,7 +48,7 @@ class ChecklistRepository implements ChecklistInterface
      * @param  array  $checklistParams
      * @return \App\Models\Checklist
      */
-    public function storeChecklist($checklistParams): Checklist
+    public function storeChecklist(array $checklistParams): Checklist
     {
         return Checklist::create([
             ...$checklistParams,
@@ -64,7 +64,7 @@ class ChecklistRepository implements ChecklistInterface
      * @param  \App\Models\Checklist  $checklist
      * @return bool
      */
-    public function updateChecklist($checklistParams, $checklist): bool
+    public function updateChecklist(array $checklistParams, Checklist $checklist): bool
     {
         return $checklist->update([
             ...$checklistParams,
@@ -78,7 +78,7 @@ class ChecklistRepository implements ChecklistInterface
      * @param  \App\Models\Checklist  $checklist
      * @return bool
      */
-    public function deleteChecklist($checklist): bool
+    public function deleteChecklist(Checklist $checklist): bool
     {
         return $checklist->delete();
     }
