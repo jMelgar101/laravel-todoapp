@@ -6,8 +6,6 @@ use App\Interfaces\ItemInterface;
 use App\Models\Checklist;
 use App\Models\Item;
 
-use Carbon\Carbon;
-
 class ItemRepository implements ItemInterface
 {
     /**
@@ -39,7 +37,7 @@ class ItemRepository implements ItemInterface
     public function updateItem($itemParams, $item): bool
     {
         $itemParams['is_complete'] = (isset($itemParams['is_complete'])) ? 1 : 0;
-        $itemParams['completed_at'] = ($itemParams['is_complete'] === 1) ? now() : null; 
+        $itemParams['completed_at'] = ($itemParams['is_complete'] === 1) ? now() : null;
 
         $updatedItem = $item->update($itemParams);
 

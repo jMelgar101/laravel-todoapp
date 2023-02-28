@@ -13,7 +13,7 @@ class ChecklistController extends Controller
 {
     private ChecklistRepository $checklistRepository;
 
-    public function __construct(ChecklistRepository $checklistRepository) 
+    public function __construct(ChecklistRepository $checklistRepository)
     {
         $this->checklistRepository = $checklistRepository;
     }

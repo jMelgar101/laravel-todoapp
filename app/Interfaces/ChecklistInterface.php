@@ -2,7 +2,8 @@
 
 namespace App\Interfaces;
 
-interface ChecklistInterface {
+interface ChecklistInterface
+{
     public function getUserChecklists();
     public function storeChecklist($checklistParams);
     public function updateChecklist($checklistParams, $checklist);

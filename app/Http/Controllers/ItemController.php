@@ -14,7 +14,7 @@ class ItemController extends Controller
 {
     private ItemRepository $itemRepository;
 
-    public function __construct(ItemRepository $itemRepository) 
+    public function __construct(ItemRepository $itemRepository)
     {
         $this->itemRepository = $itemRepository;
     }
