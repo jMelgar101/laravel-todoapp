@@ -20,15 +20,15 @@ class ItemFactory extends Factory
      */
     public function definition()
     {
-        $isComplete = rand(0, 1);
-        $completedAt = ($isComplete === 1) ? now() : null;
+        // $isComplete = rand(0, 1);
+        // $completedAt = ($isComplete === 1) ? now() : null;
 
         return [
             'name' => fake()->sentence(rand(2, 3)),
             'to_complete_by_date' => fake()->dateTimeBetween('now', '+10 months'),
             'to_complete_by_time' => fake()->time('H:i'),
-            'is_complete' => $isComplete,
-            'completed_at' => $completedAt,
+            // 'is_complete' => $isComplete,
+            // 'completed_at' => $completedAt,
         ];
     }
 }
