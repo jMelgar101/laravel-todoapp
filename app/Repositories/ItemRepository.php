@@ -63,6 +63,8 @@ class ItemRepository implements ItemInterface
      */
     public function deleteItem(Item $item): bool
     {
+        $item->subItems()->delete();
+
         return $item->delete();
     }
 }
