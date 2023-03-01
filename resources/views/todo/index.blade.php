@@ -98,7 +98,7 @@
                                     <div class="card-body">
                                         <form class="mb-3" method="POST" action="{{ route('items.store') }}">
                                             @csrf
-                                            <div class="input-group input-group-sm">
+                                            <div class="input-group input-group-sm" {{ $checklist->is_all_complete ? 'hidden' : '' }}>
                                                 <input name="name" id="item_name" type="text"
                                                     class="form-control w-25" placeholder="Add new task"
                                                     aria-label="Add new task" required>
@@ -174,7 +174,7 @@
 
                                                     {{-- List Item Action buttons --}}
                                                     @if ($item->user->is(auth()->user()))
-                                                        <div
+                                                        <div {{ $item->is_complete ? 'hidden' : '' }}
                                                             class="float-end position-absolute top-0 end-0 mt-1 action-icons">
                                                             <a href="#"
                                                                 onclick="document.getElementById('subItem_name{{ $item->id }}').removeAttribute('hidden');
@@ -252,6 +252,7 @@
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <a href="{{ route('items.destroy', $subItem) }}"
+                                                                        {{ $subItem->is_complete ? 'hidden' : '' }}
                                                                         class="action-icons"
                                                                         onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
                                                                         <svg xmlns="http://www.w3.org/2000/svg"
