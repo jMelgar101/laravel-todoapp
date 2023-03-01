@@ -10,7 +10,7 @@
                     <div class="card h-100 d-flex flex-column justify-content-between">
                         <div class="list-group list-group-flush" id="list-tab" role="tablist">
                             <div class="list-group-item">
-                                <form class="row" method="POST" action="{{ route('checklists.store') }}">
+                                <form method="POST" action="{{ route('checklists.store') }}">
                                     @csrf
                                     <div class="input-group">
                                         <input name="title" type="text" class="form-control"
@@ -69,11 +69,19 @@
 
                                 <div class="tab-pane fade show {{ $setActive }}" id="{{ $tabContentId }}"
                                     role="tabpanel" aria-labelledby="{{ $tabContentId }}-list">
-                                    <div class="card-header">
-                                        <strong><u>{{ Str::title($checklist->title) }}</u></strong>
+                                    <div class="card-header d-flex justify-content-between">
+                                        <form action="{{ route('checklists.update', $checklist) }}" method="POST"
+                                            class="w-auto">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="text" name="title" class="editable-input"
+                                                size="{{ strlen($checklist->title) }}"
+                                                value="{{ Str::title($checklist->title) }}"
+                                                onkeypress="this.style.width = ((this.value.length + 1) * 8) + 'px';"
+                                                required>
+                                        </form>
 
-                                        <form class="row float-end" method="POST" id="delete_list"
-                                            action="{{ route('checklists.destroy', $checklist) }}">
+                                        <form action="{{ route('checklists.destroy', $checklist) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <a
@@ -111,7 +119,7 @@
                                                 {{-- Todo List items --}}
                                                 <li class="list-group-item position-relative">
                                                     <div class="form-check list-group-item-action">
-                                                        <form method="POST" action="{{ route('items.update', $item) }}">
+                                                        <form action="{{ route('items.update', $item) }}" method="POST">
                                                             @csrf
                                                             @method('PATCH')
                                                             <input class="form-check-input" type="checkbox"
@@ -119,19 +127,26 @@
                                                                 id="is_complete_{{ $item->id }}"
                                                                 {{ $item->is_complete ? 'checked' : '' }}
                                                                 onchange="event.preventDefault(); this.closest('form').submit();">
-                                                            <label class="form-check-label"
-                                                                for="is_complete_{{ $item->id }}">
-                                                                {!! $item->is_complete ? '<del>' . $item->name . '</del>' : $item->name !!}
-                                                            </label>
-                                                            <small class="text-muted float-end me-3">
+                                                        </form>
+                                                        <form action="{{ route('items.update', $item) }}" method="POST"
+                                                            class="d-flex justify-content-between">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="text" name="name"
+                                                                class="editable-input {{ $item->is_complete ? 'text-decoration-line-through' : '' }}"
+                                                                size="{{ strlen($item->name) }}"
+                                                                value="{{ $item->name }}"
+                                                                {{ $item->is_complete ? 'disabled' : '' }} required>
+
+                                                            <small class="text-muted me-3">
                                                                 {{ $formatDateTime->formatCompleteDateTime($item->to_complete_by_date, $item->to_complete_by_time) }}
                                                             </small>
                                                         </form>
                                                     </div>
 
                                                     {{-- Add sublist item --}}
-                                                    <form class="form-group" method="POST"
-                                                        action="{{ route('items.store', $item) }}">
+                                                    <form action="{{ route('items.store', $item) }}" method="POST"
+                                                        class="form-group">
                                                         @csrf
                                                         <div class="input-group input-group-sm">
                                                             <input name="name" id="subItem_name{{ $item->id }}"
@@ -146,12 +161,11 @@
                                                                 name="to_complete_by_time"
                                                                 id="subItem_time{{ $item->id }}" hidden
                                                                 min="{{ $carbon::now()->format('h:i') }}">
+
                                                             <input name="checklist_id" id="checklist_id"
-                                                                value="{{ $checklist->id }}" type="text"
-                                                                class="form-control" hidden>
+                                                                value="{{ $checklist->id }}" type="hidden">
                                                             <input name="parent_id" id="parent_id"
-                                                                value="{{ $item->id }}" type="text"
-                                                                class="form-control" hidden>
+                                                                value="{{ $item->id }}" type="hidden">
                                                             <button type="submit" class="btn btn-primary"
                                                                 id="subItem_button{{ $item->id }}" hidden>Add</button>
                                                         </div>
@@ -199,8 +213,8 @@
                                                         @forelse ($item->subItems as $subItem)
                                                             <li class="list-group-item position-relative border-0 pb-0">
                                                                 <div class="form-check list-group-item-action">
-                                                                    <form method="POST"
-                                                                        action="{{ route('items.update', $subItem) }}">
+                                                                    <form action="{{ route('items.update', $subItem) }}"
+                                                                        method="POST">
                                                                         @csrf
                                                                         @method('PATCH')
                                                                         <input class="form-check-input" type="checkbox"
@@ -208,37 +222,46 @@
                                                                             id="is_complete_{{ $subItem->id }}"
                                                                             {{ $subItem->is_complete ? 'checked' : '' }}
                                                                             onchange="this.closest('form').submit();">
-                                                                        <input type="text" name="parent_id"
-                                                                            value="{{ $subItem->parent_id }}" hidden>
-                                                                        <label class="form-check-label"
-                                                                            for="is_complete_{{ $subItem->id }}">
-                                                                            {!! $subItem->is_complete ? '<del>' . $subItem->name . '</del>' : $subItem->name !!}
-                                                                        </label>
-                                                                        <small class="text-muted float-end">
+                                                                        <input type="hidden" name="parent_id"
+                                                                            value="{{ $subItem->parent_id }}">
+                                                                    </form>
+
+                                                                    <form action="{{ route('items.update', $subItem) }}"
+                                                                        method="POST"
+                                                                        class="d-flex justify-content-between">
+                                                                        @csrf
+                                                                        @method('PATCH')
+                                                                        <input type="text" name="name"
+                                                                            class="editable-input {{ $subItem->is_complete ? 'text-decoration-line-through' : '' }}"
+                                                                            size="{{ strlen($subItem->name) }}"
+                                                                            value="{{ $subItem->name }}"
+                                                                            {{ $subItem->is_complete ? 'disabled' : '' }}
+                                                                            required>
+
+                                                                        <small class="text-muted">
                                                                             {{ $formatDateTime->formatCompleteDateTime($subItem->to_complete_by_date, $subItem->to_complete_by_time) }}
                                                                         </small>
                                                                     </form>
-
-                                                                    <form
-                                                                        class="float-end position-absolute top-0 end-0 mt-1"
-                                                                        method="POST" id="delete_item"
-                                                                        action="{{ route('items.destroy', $subItem) }}">
-                                                                        @csrf
-                                                                        @method('DELETE')
-                                                                        <a href="{{ route('items.destroy', $subItem) }}"
-                                                                            class="action-icons"
-                                                                            onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                width="12" height="12"
-                                                                                fill="currentColor"
-                                                                                class="bi bi-trash3 link-danger"
-                                                                                viewBox="0 0 16 16">
-                                                                                <path
-                                                                                    d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-                                                                            </svg>
-                                                                        </a>
-                                                                    </form>
                                                                 </div>
+
+                                                                <form class="float-end position-absolute top-0 end-0 mt-1"
+                                                                    method="POST" id="delete_item"
+                                                                    action="{{ route('items.destroy', $subItem) }}">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <a href="{{ route('items.destroy', $subItem) }}"
+                                                                        class="action-icons"
+                                                                        onclick="confirm('Are you sure?'); event.preventDefault(); this.closest('form').submit();">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            width="12" height="12"
+                                                                            fill="currentColor"
+                                                                            class="bi bi-trash3 link-danger"
+                                                                            viewBox="0 0 16 16">
+                                                                            <path
+                                                                                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
+                                                                        </svg>
+                                                                    </a>
+                                                                </form>
                                                             </li>
                                                         @empty
                                                         @endforelse

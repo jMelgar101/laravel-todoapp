@@ -12,6 +12,20 @@
     display: none;
 }
 
+.editable-input {
+    border: none;
+    background: none;
+    border-radius: 0.25rem;
+}
+
+.editable-input:focus {
+    all: unset;
+    padding: 1px;
+    text-decoration: underline;
+    text-decoration-color: #86b7fe;
+    text-decoration-thickness: 2px;
+}
+
 li:hover .action-icons {
     display: inline-block;
 }
