@@ -25,8 +25,6 @@ class ChecklistStoreRequest extends FormRequest
     {
         return [
             'title'             => ['required', 'string', 'max:100'],
-            'slug'              => ['string', 'max:255'],
-            'is_all_complete'   => ['boolean'],
         ];
     }
 }

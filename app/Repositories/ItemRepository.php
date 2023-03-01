@@ -36,8 +36,9 @@ class ItemRepository implements ItemInterface
      */
     public function updateItem(array $itemParams, Item $item): bool
     {
-        $itemParams['is_complete'] = (isset($itemParams['is_complete'])) ? 1 : 0;
-        $itemParams['completed_at'] = ($itemParams['is_complete'] === 1) ? now() : null;
+        if (isset($itemParams['is_complete'])) {
+            $itemParams['completed_at'] = ($itemParams['is_complete'] === 1) ? now() : null;
+        }
 
         $updatedItem = $item->update($itemParams);
 
@@ -47,7 +48,7 @@ class ItemRepository implements ItemInterface
             $isParentComplete = ($childItemsCount < 1) ? 1 : 0;
 
             Item::where('id', $itemParams['parent_id'])->update(['is_complete' => $isParentComplete]);
-        } else {
+        } else if (!isset($itemParams['name'])) {
             $item->subItems()->update($itemParams);
         }
 

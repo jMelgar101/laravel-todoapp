@@ -27,7 +27,6 @@ class ItemStoreRequest extends FormRequest
             'name'                  => ['required', 'string', 'max:255'],
             'to_complete_by_date'   => ['nullable', 'date'],
             'to_complete_by_time'   => ['nullable', 'date_format:H:i'],
-            'completed_at'          => ['nullable', 'date'],
             'checklist_id'          => ['required'],
             'parent_id'             => ['nullable'],
         ];

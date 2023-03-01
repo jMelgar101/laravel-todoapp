@@ -123,10 +123,10 @@
                                                             @csrf
                                                             @method('PATCH')
                                                             <input class="form-check-input" type="checkbox"
-                                                                name="is_complete" value="1"
-                                                                id="is_complete_{{ $item->id }}"
                                                                 {{ $item->is_complete ? 'checked' : '' }}
                                                                 onchange="event.preventDefault(); this.closest('form').submit();">
+                                                            <input type="hidden" name="is_complete"
+                                                                value="{{ ($item->is_complete + 1) % 2 }}">
                                                         </form>
                                                         <form action="{{ route('items.update', $item) }}" method="POST"
                                                             class="d-flex justify-content-between">
@@ -136,6 +136,7 @@
                                                                 class="editable-input {{ $item->is_complete ? 'text-decoration-line-through' : '' }}"
                                                                 size="{{ strlen($item->name) }}"
                                                                 value="{{ $item->name }}"
+                                                                onkeypress="this.style.width = ((this.value.length + 1) * 8) + 'px';"
                                                                 {{ $item->is_complete ? 'disabled' : '' }} required>
 
                                                             <small class="text-muted me-3">
@@ -218,10 +219,10 @@
                                                                         @csrf
                                                                         @method('PATCH')
                                                                         <input class="form-check-input" type="checkbox"
-                                                                            name="is_complete" value="1"
-                                                                            id="is_complete_{{ $subItem->id }}"
                                                                             {{ $subItem->is_complete ? 'checked' : '' }}
-                                                                            onchange="this.closest('form').submit();">
+                                                                            onchange="event.preventDefault(); this.closest('form').submit();">
+                                                                        <input type="hidden" name="is_complete"
+                                                                            value="{{ ($subItem->is_complete + 1) % 2 }}">
                                                                         <input type="hidden" name="parent_id"
                                                                             value="{{ $subItem->parent_id }}">
                                                                     </form>
@@ -235,6 +236,7 @@
                                                                             class="editable-input {{ $subItem->is_complete ? 'text-decoration-line-through' : '' }}"
                                                                             size="{{ strlen($subItem->name) }}"
                                                                             value="{{ $subItem->name }}"
+                                                                            onkeypress="this.style.width = ((this.value.length + 1) * 8) + 'px';"
                                                                             {{ $subItem->is_complete ? 'disabled' : '' }}
                                                                             required>
 
