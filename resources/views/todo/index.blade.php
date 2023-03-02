@@ -74,10 +74,9 @@
                                             class="w-auto">
                                             @csrf
                                             @method('PATCH')
-                                            <input type="text" name="title" class="editable-input"
-                                                size="{{ strlen($checklist->title) }}"
+                                            <input type="text" name="title" class="editable-input text-truncate"
+                                                size="50" maxlength="50"
                                                 value="{{ Str::title($checklist->title) }}"
-                                                onkeypress="this.style.width = ((this.value.length + 1) * 8) + 'px';"
                                                 required>
                                         </form>
 
@@ -129,12 +128,12 @@
                                                                 value="{{ ($item->is_complete + 1) % 2 }}">
                                                         </form>
                                                         <form action="{{ route('items.update', $item) }}" method="POST"
-                                                            class="d-flex justify-content-between">
+                                                            class="d-flex justify-content-between align-items-center">
                                                             @csrf
                                                             @method('PATCH')
                                                             <input type="text" name="name"
-                                                                class="editable-input {{ $item->is_complete ? 'text-decoration-line-through' : '' }}"
-                                                                size="{{ strlen($item->name) }}"
+                                                                class="editable-input text-truncate {{ $item->is_complete ? 'text-decoration-line-through' : '' }}"
+                                                                size="35" maxlength="100"
                                                                 value="{{ $item->name }}"
                                                                 onkeypress="this.style.width = ((this.value.length + 1) * 8) + 'px';"
                                                                 {{ $item->is_complete ? 'disabled' : '' }} required>
@@ -175,7 +174,7 @@
                                                     {{-- List Item Action buttons --}}
                                                     @if ($item->user->is(auth()->user()))
                                                         <div {{ $item->is_complete ? 'hidden' : '' }}
-                                                            class="float-end position-absolute top-0 end-0 mt-1 action-icons">
+                                                            class="float-end position-absolute top-0 end-0 mt-2 action-icons">
                                                             <a href="#"
                                                                 onclick="document.getElementById('subItem_name{{ $item->id }}').removeAttribute('hidden');
                                                                     document.getElementById('subItem_date{{ $item->id }}').removeAttribute('hidden');
@@ -229,14 +228,13 @@
 
                                                                     <form action="{{ route('items.update', $subItem) }}"
                                                                         method="POST"
-                                                                        class="d-flex justify-content-between">
+                                                                        class="d-flex justify-content-between align-items-center">
                                                                         @csrf
                                                                         @method('PATCH')
                                                                         <input type="text" name="name"
-                                                                            class="editable-input {{ $subItem->is_complete ? 'text-decoration-line-through' : '' }}"
-                                                                            size="{{ strlen($subItem->name) }}"
+                                                                            class="editable-input text-truncate {{ $subItem->is_complete ? 'text-decoration-line-through' : '' }}"
+                                                                            size="33" maxlength="100"
                                                                             value="{{ $subItem->name }}"
-                                                                            onkeypress="this.style.width = ((this.value.length + 1) * 8) + 'px';"
                                                                             {{ $subItem->is_complete ? 'disabled' : '' }}
                                                                             required>
 
@@ -246,7 +244,7 @@
                                                                     </form>
                                                                 </div>
 
-                                                                <form class="float-end position-absolute top-0 end-0 mt-1"
+                                                                <form class="float-end position-absolute top-0 end-0 mt-2"
                                                                     method="POST" id="delete_item"
                                                                     action="{{ route('items.destroy', $subItem) }}">
                                                                     @csrf
