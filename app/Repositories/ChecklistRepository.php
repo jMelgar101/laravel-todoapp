@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\ChecklistInterface;
 use App\Models\Checklist;
 use App\Models\Item;
-
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
@@ -20,6 +20,12 @@ class ChecklistRepository implements ChecklistInterface
     {
         $checklists = Checklist::with('user')
             ->where('user_id', auth()->id())
+            ->withCount([
+                'items',
+                'items as completed_items_count' => function (Builder $query) {
+                    $query->where('is_complete', true);
+                }
+            ])
             ->latest('updated_at')
             ->paginate(7);
 
