@@ -21,6 +21,7 @@ class ChecklistRepository implements ChecklistInterface
         $checklists = Checklist::with('user')
             ->where('user_id', auth()->id())
             ->withCount([
+                // not sure why it doesn't include items with parent_id
                 'items',
                 'items as completed_items_count' => function (Builder $query) {
                     $query->where('is_complete', true);
@@ -37,12 +38,8 @@ class ChecklistRepository implements ChecklistInterface
                 continue;
             }
 
-            $itemsCount = Item::where([
-                'is_complete' => 0,
-                'checklist_id' => $checklist->id,
-            ])->count();
-
-            $checklist->update(['is_all_complete' => ($itemsCount > 0) ? 0 : 1]);
+            $checklist->update(['is_all_complete' =>
+                ($checklist->items_count !== $checklist->completed_items_count) ? 0 : 1]);
         }
 
         return $checklists;
